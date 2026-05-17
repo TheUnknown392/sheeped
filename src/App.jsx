@@ -8,7 +8,7 @@ import { Session, Role } from './imports/Session'
 export const SessionContext = createContext();
 
 function App() {
-  const [session, setSession] = useState(Session)n
+  const [session, setSession] = useState(Session)
   
   // const navigate = useNavigate()
 
