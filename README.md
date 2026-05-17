@@ -1,18 +1,21 @@
-# React + Vite
+# Sheeped
+This project aims to create a pure dropshipping website where user request items in following process
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+```txt
+	request items by link -> recieve responce -> user can accept/reject the proposed price
+	
+	if accepted, order and delivery process can continue
+```
 
-Currently, two official plugins are available:
+## Scope
+This project does not handle inventory. This project is concerned with the running orders only.
+This project focuses on pricing, order and delivery.
+This project focuses on orders and required dashboard for users and admins.
+This project aims to add some online payment gateways.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
-
-## React Compiler
-
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
-
-Note: This will impact Vite dev & build performances.
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Tech Stack
+vite + react
+javascript
+html
+css
+mongodb
