@@ -13,11 +13,11 @@ const recentRequests = [
 export default function MainForm(){
     const [notes, setNotes] = useState("");
     const [items, setItems] = useState([
-        { url: "", qty: 1 }
+        { name: "", url: "", qty: 1 }
     ]);
 
     function addItem() {
-        setItems(prev => [...prev, { url: "", qty: 1 }]);
+        setItems(prev => [...prev, { name: "", url: "", qty: 1 }]);
     }
 
     function updateItem(index, field, value) {
@@ -60,12 +60,21 @@ export default function MainForm(){
                     {items.map((item, index) => (
                         <div key={index} className="field" style={{ marginBottom: 18 }}>
                             <input
+                                style={{marginBottom:5}}
+                                value={item.name}
+                                onChange={e =>
+                                    updateItem(index, "name", e.target.value)
+                                }
+                                placeholder="dreamy item"
+                            />
+                            <input
                                 value={item.url}
                                 onChange={e =>
                                     updateItem(index, "url", e.target.value)
                                 }
                                 placeholder="https://mydreamitem.com/item"
                             />
+
                             
                             <div className="qty-row">
                                 <button
