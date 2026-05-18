@@ -1,27 +1,50 @@
+import '../css/Home.css'
 import { useState, useContext } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 
 import Login from './Login'
+import NavButton from '../component/NavButton.jsx'
+import Navigation from '../component/Navigation.jsx'
+import Hero from '../component/Hero.jsx'
+import MainForm from '../component/Form.jsx'
+import Faq from '../component/FAQ.jsx'
+import Footer from '../component/Footer.jsx'
+
 import { SessionContext } from '../App.jsx'
 
 import { Session, Role } from '../imports/Session'
 
 
 function Guest(){
+
     return (
-        <p> You are a guest </p>
+        <>
+            <Navigation />
+            <Hero />
+            <MainForm />
+            <Faq />
+            <Footer />
+        </>
     )
 }
 
 function User(){
     return (
-        <p> You are a user </p>
+        <>
+            <Navigation />
+            <MainForm />
+            <Faq />
+            <Footer />
+        </>
+        
     )
 }
 
 function Admin(){
     return (
-        <p> You are a admin </p>
+        <>
+            <Navigation />
+        </>
     )
 }
 
