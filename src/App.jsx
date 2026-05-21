@@ -1,10 +1,12 @@
 import { useState, createContext } from 'react'
 import { Routes, Route, Link, useNavigate, useLocation } from 'react-router-dom'
+
 import Home from './pages/Home'
 import Login from './pages/Login'
+import Register from './pages/Register'
 
 import { Session, Role } from './imports/Session'
-
+ 
 export const SessionContext = createContext();
 
 function App() {
@@ -14,8 +16,9 @@ function App() {
     return (
         <SessionContext.Provider value = {{session, setSession}}>
             <Routes>
-                <Route path="/"      element={<Home />} />
-                <Route path="/login" element={<Login />} />
+                <Route path="/"         element={<Home />} />
+                <Route path="/login"    element={<Login />} />
+                <Route path="/register" element={<Register />} />
             </Routes>
         </SessionContext.Provider>
     )
