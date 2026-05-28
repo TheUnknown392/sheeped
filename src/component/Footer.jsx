@@ -1,4 +1,5 @@
 import '../css/Home.css'
+import sheeped from '../assets/White-Stupid-Cute-Cartoon-Sheep.svg'
 
 export default function Footer(){
     return(
@@ -7,7 +8,7 @@ export default function Footer(){
                 <div className="footer-grid">
                     <div className="footer-brand">
                         <div className="nav-logo">
-                            <div className="nav-logo-icon">🐑</div>
+                            <img src={sheeped} className="nav-logo-icon"/>
                             Sheeped
                         </div>
                         <p>International shipments,  one link at a time.</p>

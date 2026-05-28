@@ -9,6 +9,7 @@ import Hero from '../component/Hero.jsx'
 import MainForm from '../component/Form.jsx'
 import Faq from '../component/FAQ.jsx'
 import Footer from '../component/Footer.jsx'
+import AdminDashboard from '../component/AdminDashboard.jsx'
 
 import { SessionContext } from '../App.jsx'
 
@@ -19,7 +20,7 @@ function Guest(){
 
     return (
         <>
-            <Navigation />
+            <Navigation /> {/* todo: navbar changes as page changes */}
             <Hero />
             <MainForm />
             <Faq />
@@ -44,6 +45,7 @@ function Admin(){
     return (
         <>
             <Navigation />
+            <AdminDashboard />
         </>
     )
 }
@@ -73,7 +75,7 @@ function Home() {
 
     return (
         <div>
-            {page}
+            <User />
         </div>
     )
 }

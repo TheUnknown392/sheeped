@@ -5,6 +5,8 @@ import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { SessionContext } from '../App.jsx'
 import NavButton from '../component/NavButton.jsx'
 
+import sheeped from '../assets/White-Stupid-Cute-Cartoon-Sheep.svg'
+
 import { Session, Role } from '../imports/Session'
 
 export default function Navigation(){
@@ -12,7 +14,7 @@ export default function Navigation(){
     return(
         <nav>
             <div className="nav-logo">
-                <div className="nav-logo-icon"></div>
+                <img src={sheeped} className="nav-logo-icon"/>
                 Sheeped
             </div>
             <div className="nav-links">
