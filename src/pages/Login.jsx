@@ -9,7 +9,16 @@ export default function Login() {
     const [password, setPassword] = useState('');
     const [showPass, setShowPass] = useState(false);
 
-    function handleSubmit() {
+    async function handleSubmit() {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/user/signin`,{
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                email    : email,
+                password : password
+            })
+        });
+        console.log(response.status);
         console.log({ email, password });
     }
 

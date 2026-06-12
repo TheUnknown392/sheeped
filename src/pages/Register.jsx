@@ -32,8 +32,20 @@ export default function Register() {
         setForm(prev => ({ ...prev, [field]: value }));
     }
 
-    function handleSubmit() {
-        // TODO: wire up your registration logic here
+    async function handleSubmit() {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/user/signup`,{
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                firstName: form.firstName,
+                lastName : form.lastName,
+                email    : form.email,
+                phone    : form.phone,
+                address  : form.address,
+                password : form.password
+            })
+        });
+        console.log(response.status);
         console.log(form);
     }
 
