@@ -21,10 +21,7 @@ export default function Register() {
         lastName:   '',
         email:      '',
         phone:      '',
-        country:    '',
         address:    '',
-        city:       '',
-        postal:     '',
         password:   '',
     });
     const [showPass, setShowPass] = useState(false);
@@ -94,33 +91,16 @@ export default function Register() {
                         />
                     </div>
 
-                    {/* PHONE + COUNTRY */}
-                    <div className="field-row">
-                        <div className="field">
-                            <label htmlFor="reg-phone">Phone number</label>
-                            <input
-                                id="reg-phone"
-                                type="tel"
-                                placeholder="+977 98XXXXXXXX"
-                                value={form.phone}
-                                onChange={e => update('phone', e.target.value)}
-                            />
-                        </div>
-                        <div className="field">
-                            <label htmlFor="reg-country">Country</label>
-                            <select
-                                id="reg-country"
-                                value={form.country}
-                                onChange={e => update('country', e.target.value)}
-                            >
-                                <option value="">Select country</option>
-                                <option value="NP">Nepal</option>
-                                <option value="IN">India</option>
-                                <option value="CN">China</option>
-                                <option value="US">United States</option>
-                                <option value="other">Other</option>
-                            </select>
-                        </div>
+                    {/* PHONE */}
+                    <div className="field">
+                        <label htmlFor="reg-phone">Phone number</label>
+                        <input
+                            id="reg-phone"
+                            type="tel"
+                            placeholder="98XXXXXXXX"
+                            value={form.phone}
+                            onChange={e => update('phone', e.target.value)}
+                        />
                     </div>
 
                     {/* ADDRESS */}
@@ -134,31 +114,6 @@ export default function Register() {
                             onChange={e => update('address', e.target.value)}
                         />
                     </div>
-
-                    {/* CITY + POSTAL */}
-                    <div className="field-row">
-                        <div className="field">
-                            <label htmlFor="reg-city">City</label>
-                            <input
-                                id="reg-city"
-                                type="text"
-                                placeholder="Kathmandu"
-                                value={form.city}
-                                onChange={e => update('city', e.target.value)}
-                            />
-                        </div>
-                        <div className="field">
-                            <label htmlFor="reg-postal">Postal / ZIP code</label>
-                            <input
-                                id="reg-postal"
-                                type="text"
-                                placeholder="44600"
-                                value={form.postal}
-                                onChange={e => update('postal', e.target.value)}
-                            />
-                        </div>
-                    </div>
-
                     {/* PASSWORD */}
                     <div className="field">
                         <label htmlFor="reg-pass">Password</label>
