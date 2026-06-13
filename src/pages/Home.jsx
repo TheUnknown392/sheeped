@@ -52,6 +52,7 @@ function Admin(){
 
 
 function Home() {
+    // todo: manage logged in states
     const { session, setSession } = useContext(SessionContext);
     console.log(session)
 

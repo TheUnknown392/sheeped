@@ -18,9 +18,15 @@ export default function Login() {
                 password : password
             })
         });
-        // todo: do jwt stuff
-        console.log(response.status);
-        console.log({ email, password });
+        if(response.status == 200){
+            const data = await response.json();
+            localStorage.setItem("token", data.token);
+            navigate("/");
+        }
+        
+        setPassword("");
+        setShowPass("");
+        setEmail("");
     }
 
     return (

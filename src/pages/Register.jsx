@@ -1,6 +1,6 @@
 import '../css/Login.css'
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import AuthSidebar from '../component/AuthSidebar.jsx'
 
 function getStrength(password) {
@@ -28,6 +28,8 @@ export default function Register() {
 
     const strength = getStrength(form.password);
 
+    const navigate = useNavigate();
+
     function update(field, value) {
         setForm(prev => ({ ...prev, [field]: value }));
     }
@@ -45,7 +47,12 @@ export default function Register() {
                 password : form.password
             })
         });
-        // todo: do jwt stuff here and redirect.
+        // todo: handle failure
+        if(response.status == 200){
+            const data = await response.json();
+            localStorage.setItem("token", data.token);
+            navigate("/");
+        }
         console.log(response.status);
         console.log(form);
     }

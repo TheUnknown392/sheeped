@@ -8,86 +8,96 @@ import User from '../models/UserModel.js'
 dotenv.config();
 
 // keep this somewhere else
-function signUser(info){
-    return jwt.sign(newUser,JWT_CHABI);
-}
+    function getExpSec(sec){
+        return Math.floor(Date.now() / 1000) + (sec);
+    }
+    function signUser(user){
+        var toTok = {
+            id: user._id,
+            em: user.email,
+            fn: user.firstName,
+            ln: user.lastName,
+            rl: user.role
+            exp: 0
+        }
+        
+        return jwt.sign(toTok,process.env.JWT_CHABI);
+    }
 
 const signup = async (req, res) => {
     const {firstName, lastName, email , phone, address, password} = req.body;
-    const userExists = await User.findOne({
-        email: email
-    })
-
-    if(userExists){
-        res.status(403).json({
-            message: "Email is already taken",
+    try{
+        const userExists = await User.findOne({
+            email: email
         });
-    }else{
-        const hashedPassword = bcryptjs.hashSync(password,5);
-        try{
-            const newUser = await User.create({
-                firstName: firstName,
-                lastName : lastName,
-                email    : email,
-                phone    : phone,
-                address  : address,
-                password : hashedPassword
+        
+        if(userExists){
+            res.status(403).json({
+                message: "Email is already taken",
             });
-            // we don't need to send all the details.
-            var token = signUser(newUser);
-            res.status(201).json({
-                message: "User Created",
-                token  : token
-            });
-        }catch(err){
-            res.status(400).json({
-                message: "User Creation failed",
-                error: err.message
-            });            
+            return;
         }
 
-    }
-    
+        const hashedPassword = bcryptjs.hashSync(password,5);
 
+        const newUser = await User.create({
+            firstName: firstName,
+            lastName : lastName,
+            email    : email,
+            phone    : phone,
+            address  : address,
+            password : hashedPassword
+        });
+
+        var token = signUser(newUser);
+        res.status(200).json({
+            message: "User Created",
+            token  : token
+        });
+	}catch(err){
+	    res.status(403).json({
+		    message: err.message
+	    });
+	}
 }
 
 const signin = async (req, res) => {
     const {email, password} = req.body;
-    const user = await User.findOne({
-        email: email
-    })
 
-    if(!user){
-        res.status(404).json({
-            message: "User does not exist",
-        });
-    }else{
-        try{
-            const valid = bcryptjs.compareSync(password,user.password);
-            if(valid){
-                var token = signUser(user);
-                res.status(201).json({
-                    message: "login sucessfull",
-                    token = token;
-                });
-                console.log(user);
-            }else{
-                res.status(403).json({
-                    message: "password does not match"
-                });
-                console.log("password does not match");
-            }
-        }catch(err){
-            res.status(400).json({
-                message: "failed searching for user",
-                error: err.message
-            });            
+    try{
+        const user = await User.findOne({
+            email: email
+        })
+        
+        if(!user){
+            res.status(404).json({
+                message: "User does not exist",
+            });
+            return;
         }
 
+        const valid = bcryptjs.compareSync(password,user.password);
+        
+	    if(valid){
+            var tok = signUser(user);
+            res.status(200).json({
+                message: "login sucessfull",
+                token: tok
+            });
+            console.log(user);
+        }else{
+            res.status(403).json({
+                message: "password does not match"
+            });
+            console.log("password does not match");
+            return;
+        }
+    }catch(err){
+	    res.status(403).json({
+		    message: err.message
+	    });        
     }
-    
-
-} 
+}
 
 
 
