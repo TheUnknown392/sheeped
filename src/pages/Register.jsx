@@ -45,6 +45,7 @@ export default function Register() {
                 password : form.password
             })
         });
+        // todo: do jwt stuff here and redirect.
         console.log(response.status);
         console.log(form);
     }

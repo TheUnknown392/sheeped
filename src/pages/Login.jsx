@@ -18,6 +18,7 @@ export default function Login() {
                 password : password
             })
         });
+        // todo: do jwt stuff
         console.log(response.status);
         console.log({ email, password });
     }

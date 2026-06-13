@@ -24,7 +24,7 @@ export default function Navigation(){
             </div>
             <div className="nav-right">
                 <NavButton text="Log in" to="/login" className="btn-ghost" />
-                <button className="btn-primary">Get Started</button>  {/* TODO: add sign up page */}
+                <NavButton text="Get Started" to="/register" className="btn-primary" />
             </div>
         </nav>
 
