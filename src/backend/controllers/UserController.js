@@ -3,26 +3,10 @@ import jwt from 'jsonwebtoken'
 import bcryptjs from 'bcryptjs'
 import dotenv from 'dotenv'
 
+import { signUser, getExpSec } from '../utils/jwt.js'
 import User from '../models/UserModel.js'
 
 dotenv.config();
-
-// keep this somewhere else
-    function getExpSec(sec){
-        return Math.floor(Date.now() / 1000) + (sec);
-    }
-    function signUser(user){
-        var toTok = {
-            id: user._id,
-            em: user.email,
-            fn: user.firstName,
-            ln: user.lastName,
-            rl: user.role,
-            exp: getExpSec(60*60*24)
-        }
-        
-        return jwt.sign(toTok,process.env.JWT_CHABI);
-    }
 
 const signup = async (req, res) => {
     const {firstName, lastName, email , phone, address, password} = req.body;
@@ -54,11 +38,17 @@ const signup = async (req, res) => {
             message: "User Created",
             token  : token
         });
-	}catch(err){
-	    res.status(403).json({
-		    message: err.message
+    }catch(err){
+	if(err.code == 11000){
+	    res.status(409).json({
+		message: "User with this email or phone already exists"
 	    });
+	    return;
 	}
+	res.status(409).json({
+	    message: err.message
+	});
+    }
 }
 
 const signin = async (req, res) => {
@@ -87,9 +77,8 @@ const signin = async (req, res) => {
             console.log(user);
         }else{
             res.status(403).json({
-                message: "password does not match"
+                message: "password or email does not match"
             });
-            console.log("password does not match");
             return;
         }
     }catch(err){

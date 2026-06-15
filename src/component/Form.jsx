@@ -177,6 +177,7 @@ export default function MainForm(){
                                        padding:'9px', color:'var(--text)', cursor:'pointer',
                                        fontSize:13, fontFamily:'DM Sans, sans-serif'
                                    }}
+				   showWhenLoggedIn={false}
                         />
                     </div>
 
