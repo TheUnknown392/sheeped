@@ -40,8 +40,8 @@ const userSchema = new mongoose.Schema({
   role: {
     type: String,
     required: [true, 'Role is required'],
-    enum: ['buyer', 'admin'],
-    default: 'buyer'
+    enum: ['user', 'admin'],
+    default: 'user'
   },
   is_verified: {
     type: Boolean,

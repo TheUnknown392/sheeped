@@ -1,9 +1,12 @@
 import '../css/Login.css'
-import { useState } from 'react'
+import { useState, useContext } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import AuthSidebar from '../component/AuthSidebar.jsx'
 
+import { SessionContext } from '../component/SessionProvider.jsx'
+
 export default function Login() {
+    const { refreshSession } = useContext(SessionContext);
     const navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -21,9 +24,11 @@ export default function Login() {
         if(response.status == 200){
             const data = await response.json();
             localStorage.setItem("token", data.token);
+	    refreshSession();
             navigate("/");
         }
-        
+	
+	
         setPassword("");
         setShowPass("");
         setEmail("");

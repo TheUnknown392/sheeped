@@ -1,26 +1,25 @@
-import { useState, createContext } from 'react'
+import { useState, createContext, useEffect } from 'react'
 import { Routes, Route, Link, useNavigate, useLocation } from 'react-router-dom'
+import { jwtDecode } from 'jwt-decode'
+
+import { SessionProvider } from './component/SessionProvider.jsx'
+import { Session, Role, getRoleFromToken } from './imports/Session'
 
 import Home from './pages/Home'
 import Login from './pages/Login'
 import Register from './pages/Register'
 
-import { Session, Role } from './imports/Session'
  
-export const SessionContext = createContext();
 
 function App() {
-    const [session, setSession] = useState(Session)
-
-    const stored = localStorage.getItem("session");
     return (
-        <SessionContext.Provider value = {{session, setSession}}>
+        <SessionProvider>
             <Routes>
                 <Route path="/"         element={<Home />} />
                 <Route path="/login"    element={<Login />} />
                 <Route path="/register" element={<Register />} />
             </Routes>
-        </SessionContext.Provider>
+        </SessionProvider>
     )
 }
 

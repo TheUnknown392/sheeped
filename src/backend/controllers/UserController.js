@@ -17,8 +17,8 @@ dotenv.config();
             em: user.email,
             fn: user.firstName,
             ln: user.lastName,
-            rl: user.role
-            exp: 0
+            rl: user.role,
+            exp: getExpSec(60*60*24)
         }
         
         return jwt.sign(toTok,process.env.JWT_CHABI);
