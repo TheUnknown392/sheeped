@@ -1,12 +1,10 @@
 import mongoose from "mongoose"
 import jwt from 'jsonwebtoken'
 import bcryptjs from 'bcryptjs'
-import dotenv from 'dotenv'
 
 import { signUser, getExpSec } from '../utils/jwt.js'
 import User from '../models/UserModel.js'
 
-dotenv.config();
 
 const signup = async (req, res) => {
     const {firstName, lastName, email , phone, address, password} = req.body;

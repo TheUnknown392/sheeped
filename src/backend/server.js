@@ -4,6 +4,7 @@ import mongoose from 'mongoose'
 import cors from 'cors'
 
 import UserAPI from './routes/UserRoute.js'
+import ProductAPI from './routes/ProductRoute.js'
 
 dotenv.config();
 
@@ -16,9 +17,10 @@ app.use(cors());
 
 // major routes
 app.use("/user",UserAPI);
+app.use("/product",ProductAPI);
 
 
-app.listen(process.env.DB_PORT, "localhost", () =>{
+app.listen(process.env.EXPRESS_PORT, process.env.EXPRESS_HOST, () =>{
     console.log("listening sucessfully");
 });
 

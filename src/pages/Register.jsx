@@ -55,16 +55,16 @@ export default function Register() {
                 password : form.password
             })
         });
-	
-	const data = await response.json();
+	    
+	    const data = await response.json();
         if(response.status == 200){
             localStorage.setItem("token", data.token);
-	    refreshSession();
+	        refreshSession();
             navigate("/");
         }else{
-	    setMessage(data.message);
-	    setOpen(true);
-	}
+	        setMessage(data.message);
+	        setOpen(true);
+	    }
 
         console.log(response.status);
         console.log(form);

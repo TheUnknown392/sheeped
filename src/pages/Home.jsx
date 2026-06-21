@@ -66,17 +66,18 @@ function getPage(session){
 }
 
 function Home() {
-
     const { session, setSession } = useContext(SessionContext);
+
+    
     let page = getPage(session);
     
     return (
-	<>
+	    <>
             <div>
-		<Navigation />
-		{page}
+		        <Navigation />
+		        {page}
             </div>
-	 </>
+	    </>
     )
 }
 

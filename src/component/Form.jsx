@@ -2,7 +2,14 @@ import '../css/Home.css'
 import { useState, useContext } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 
+
+import { Session, Role } from '../imports/Session'
+import { SessionContext } from '../component/SessionProvider.jsx';
+
+
 import NavButton from '../component/NavButton.jsx'
+import { getToken } from '../imports/jwt.js'
+import { logOut } from '../imports/logOut.jsx'
 
 const recentRequests = [
     { icon: "⌨️", name: "A48D — Mechanical Keyboard", time: "1 hour ago", badge: null, badgeClass: "badge-testing" },
@@ -11,6 +18,8 @@ const recentRequests = [
 ];
 
 export default function MainForm(){
+    const { session, setSession, refreshSession } = useContext(SessionContext);
+    
     const [notes, setNotes] = useState("");
     const [items, setItems] = useState([
         { name: "", url: "", qty: 1 }
@@ -21,18 +30,66 @@ export default function MainForm(){
     }
 
     function updateItem(index, field, value) {
-        setItems(prev =>
-            prev.map((item, i) =>
-                i === index ? { ...item, [field]: value } : item
-            )
-        );
+        setItems(prev => prev.map((item, i) => i === index ? { ...item, [field]: value } : item)); 
+    }
+
+    function removeEmptyItems() {
+        setItems(prev =>prev.filter(item =>item.name.trim() !== "" && item.url.trim() !== ""));
+    }
+
+    function  allEmpty() {
+        return items.every(item => item.name.trim() === "" && item.url.trim() === "");
     }
 
     function removeItem(index) {
         setItems(prev => prev.filter((_, i) => i !== index));
     }
 
-    function handleSubmit() {
+    async function handleSubmit() {
+        if(session.role == Role.GUEST){
+            console.log("not logged in");
+            return;
+        }
+        if(allEmpty()){
+            console.log("the form is empty");
+            return;            
+        }
+        const token = getToken();
+
+        // todo: somehow extract tihs logout flow. can't use logout.jsx as that's a hook
+        //       remove this code dublication
+        if(!token){
+            localStorage.clear();
+            refreshSession(); 
+        }
+        removeEmptyItems(); // todo: this doesn't work for some reason. probably takes time to update.
+        var Authorization = "Bearer " + token;
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/product/add`,{
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+
+            body: JSON.stringify({
+                items,
+                notes,
+                Authorization
+            })
+        });
+
+        const data = await response.json();
+        switch(response.status){
+        case 200:
+            setItems([{ name: "", url: "", qty: 1 }]);
+            setNotes("");
+            break;
+        case 403:
+            console.log("logout");
+            localStorage.clear();
+            refreshSession(); 
+            break;
+        default:
+            // logOut(); // todo: for dev only
+            
+        }
         console.log({
             items,
             notes
