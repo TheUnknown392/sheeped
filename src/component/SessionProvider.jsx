@@ -2,21 +2,22 @@ import { createContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom"
 import { jwtDecode } from "jwt-decode";
 import { Session, Role, getRoleFromToken } from '../imports/Session.jsx'
+import { hasExpired, getToken } from '../imports/jwt.js'
 
 export const SessionContext = createContext();
 
 export function SessionProvider({ children }) {
     const [session, setSession] = useState(() => {
-        const token = localStorage.getItem("token");
-
-        if (!token) return {
-	    ...Session
-	};
-
+        var token = "";
+        if(!(token = getToken())){
+            return {
+                ...Session
+            };
+        }
         const decodedTok = jwtDecode(token);
 
         return {
-	    ...Session,
+	        ...Session,
             user_id: decodedTok.id,
             email: decodedTok.em,
             firstName: decodedTok.fn,
@@ -26,12 +27,13 @@ export function SessionProvider({ children }) {
     });
 
     const refreshSession = () => {
-        const token = localStorage.getItem("token");
-
+        const token = getToken();
+        
         if (!token) {
             setSession({ ...Session });
             return;
         }
+
 
         const decoded = jwtDecode(token);
 
