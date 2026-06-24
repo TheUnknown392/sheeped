@@ -17,8 +17,8 @@ const LinkSchema = new mongoose.Schema({
     quantity: {
         type: Number,
         required: [true, "no quantity in link"],
-        default: 0
+        default: 1
     }
 });
 
-export default { LinkSchema }
+export default LinkSchema;
