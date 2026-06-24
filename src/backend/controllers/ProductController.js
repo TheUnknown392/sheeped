@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken'
 import bcryptjs from 'bcryptjs'
 
 import { signUser, getExpSec, jwtVerify } from '../utils/jwt.js'
-import User from '../models/UserModel.js'
+import Request from '../models/RequestModel.js'
 
 
 const addRequest = async (req, res) => {
@@ -14,6 +14,8 @@ const addRequest = async (req, res) => {
     } = req.body;
     console.log(items, notes, Authorization);
 
+
+
     var userToken = jwtVerify(Authorization);
 
     if(!userToken){
@@ -22,12 +24,32 @@ const addRequest = async (req, res) => {
         });
         return;
     }
-
-    console.log("\nuser token:",userToken);
     
-    res.status(200).json({
-        message: "Request Recieved"
-    });
+    // RequestSchema
+    //  user_id = 
+    //  links = items links : url, name, quantity
+    //  description = notes
+    try{
+        const newRequest = await Request.create({
+            user_id : userToken.id,
+            links   : items.map((item) =>({
+                url      : item.url,
+                name     : item.name,
+                quantity : item.qty
+            })),
+            description  : notes
+        });
+        console.log("saved");
+        res.status(200).json({
+            message: "Request Recieved"
+        });
+    }catch(err){
+        res.status(500).json({
+            message: "Could not save to database",
+            err: err.message
+        });
+    }
+
 
 }
 

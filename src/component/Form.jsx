@@ -6,6 +6,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { Session, Role } from '../imports/Session'
 import { SessionContext } from '../component/SessionProvider.jsx';
 
+import Popup from '../component/Popup.jsx'
 
 import NavButton from '../component/NavButton.jsx'
 import { getToken } from '../imports/jwt.js'
@@ -21,7 +22,7 @@ export default function MainForm(){
     const { session, setSession, refreshSession } = useContext(SessionContext);
     
     const [notes, setNotes] = useState("");
-    const [items, setItems] = useState([
+    var [items, setItems] = useState([
         { name: "", url: "", qty: 1 }
     ]);
 
@@ -34,7 +35,7 @@ export default function MainForm(){
     }
 
     function removeEmptyItems() {
-        setItems(prev =>prev.filter(item =>item.name.trim() !== "" && item.url.trim() !== ""));
+        items = items.filter((item) => item.name.trim() !== "" || item.url.trim() !== "");
     }
 
     function  allEmpty() {
@@ -60,9 +61,11 @@ export default function MainForm(){
         //       remove this code dublication
         if(!token){
             localStorage.clear();
-            refreshSession(); 
+            refreshSession();
+            return;
         }
-        removeEmptyItems(); // todo: this doesn't work for some reason. probably takes time to update.
+        
+        removeEmptyItems();
         var Authorization = "Bearer " + token;
         const response = await fetch(`${import.meta.env.VITE_API_URL}/product/add`,{
             method: "POST",
@@ -82,18 +85,23 @@ export default function MainForm(){
             setNotes("");
             break;
         case 403:
-            console.log("logout");
             localStorage.clear();
             refreshSession(); 
             break;
+        case 500:
+            // <Popup name="Error" Content="Soome error on our end. Please try again later."/>
+            alert("Soome error on our end. Please try again later.");
         default:
-            // logOut(); // todo: for dev only
-            
+            console.log("response.status sent unhandled status code");
         }
-        console.log({
-            items,
-            notes
-        });
+        
+        console.log(
+            "Adding Product",
+            {
+                items,
+                notes
+            }
+        );
     }
 
 
@@ -122,14 +130,14 @@ export default function MainForm(){
                                 onChange={e =>
                                     updateItem(index, "name", e.target.value)
                                 }
-                                placeholder="dreamy item"
+                                placeholder="*dreamy item"
                             />
                             <input
                                 value={item.url}
                                 onChange={e =>
                                     updateItem(index, "url", e.target.value)
                                 }
-                                placeholder="https://mydreamitem.com/item"
+                                placeholder="*https://mydreamitem.com/item"
                             />
 
                             
