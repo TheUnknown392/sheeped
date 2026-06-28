@@ -25,14 +25,10 @@ const addRequest = async (req, res) => {
         return;
     }
     
-    // RequestSchema
-    //  user_id = 
-    //  links = items links : url, name, quantity
-    //  description = notes
     try{
         const newRequest = await Request.create({
             user_id : userToken.id,
-            links   : items.map((item) =>({
+            links   : items.map((item) => ({
                 url      : item.url,
                 name     : item.name,
                 quantity : item.qty
@@ -49,8 +45,6 @@ const addRequest = async (req, res) => {
             err: err.message
         });
     }
-
-
 }
 
 export { addRequest }

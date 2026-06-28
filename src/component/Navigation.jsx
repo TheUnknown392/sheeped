@@ -1,3 +1,5 @@
+import Dropdown from 'react-bootstrap/Dropdown';
+
 import '../css/Home.css'
 import { useState, useContext } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
@@ -25,12 +27,19 @@ function updateRightButton(session){
 		break;
 	case Role.USER:
 		button =(
-            <button
-                className="btn-ghost"
-                onClick= {logOut()}
-			>
-                Log Out
-			</button>
+            <>  
+                <Dropdown>
+                    <Dropdown.Toggle  variant="success" className="btn-primary">
+                        {session.firstName + " " + session.lastName}
+                    </Dropdown.Toggle>
+                    <Dropdown.Menu className="btn-primary">
+                        <Dropdown.Item href="#/action-2">My Profile</Dropdown.Item> {/* todo: create a new page for this*/}
+                        <Dropdown.Item href="#/action-1">Orders</Dropdown.Item> {/* todo: create a new page for this*/}
+                        <Dropdown.Item onClick={logOut()}>Log Out</Dropdown.Item>
+                    </Dropdown.Menu>
+                </Dropdown>
+            </>
+            
 		)
         break;
     case Role.ADMIN:

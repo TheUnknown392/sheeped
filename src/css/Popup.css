@@ -26,7 +26,7 @@
     background: linear-gradient(90deg, #6ee7f7, #a78bfa);
     -webkit-background-clip: text; -webkit-text-fill-color: transparent;
 }
-.pu-content { font-size: 13px; color: #666680; line-height: 1.6; margin-bottom: 22px; }
+.pu-content { font-size: 16px; color: #666680; line-height: 1.6; margin-bottom: 22px; }
 .pu-btn {
     width: 100%; background: #6ee7f7; color: #0a0a0f; border: none;
     padding: 12px; border-radius: 10px; font-size: 14px; font-weight: 700;
