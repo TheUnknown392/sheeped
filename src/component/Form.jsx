@@ -18,6 +18,7 @@ const recentRequests = [
     { icon: "🖱️", name: "A471 — Ergonomic Mouse", time: "3 hours ago", badge: null, badgeClass: "badge-sampled" },
 ];
 
+
 export default function MainForm(){
     const { session, setSession, refreshSession } = useContext(SessionContext);
     
@@ -25,6 +26,8 @@ export default function MainForm(){
     var [items, setItems] = useState([
         { name: "", url: "", qty: 1 }
     ]);
+
+    var [loginPopup, setLoginPopup] = useState(false);
 
     function addItem() {
         setItems(prev => [...prev, { name: "", url: "", qty: 1 }]);
@@ -48,7 +51,7 @@ export default function MainForm(){
 
     async function handleSubmit() {
         if(session.role == Role.GUEST){
-            console.log("not logged in");
+            setLoginPopup(true);
             return;
         }
         if(allEmpty()){
@@ -192,18 +195,6 @@ export default function MainForm(){
                         + Add another product
                     </button>
 
-                    {/* PRIORITY BOX */}
-                    <div className="priority-box">
-                        <div className="priority-icon"></div>
-                        <div className="priority-text">
-                            <strong>Priority Logistics</strong>
-                            <br />
-                            <span style={{ fontSize: "13px" }}>
-                                Please email directly if items cost more than 2 Lakhs
-                            </span>
-                        </div>
-                    </div>
-
                     {/* NOTES */}
                     <div className="field">
                         <label>Additional Notes (Optional)</label>
@@ -218,8 +209,9 @@ export default function MainForm(){
                     <button className="btn-submit" onClick={handleSubmit}>
                         Request Quote for {items.length} Item
                         {items.length !== 1 ? "s" : ""}
-                    </button>
+                    </button>                    
                 </div>
+                <Popup name = "Log-in" content = "Please log in first" open = {loginPopup}  onClose={() => {setLoginPopup(false)}} />
                 {/* SIDEBAR */}
                 <div className="sidebar">
                     <div className="card recent-card">

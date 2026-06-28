@@ -1,11 +1,11 @@
+import '../css/Popup.css'
 import { useState } from "react";
 
 export default function Popup({ name = "", content = "", open = false, onClose }) {
   if (!open) return null;
 
   return (
-    <>
-     
+    <>     
       <div className="pu-overlay" onClick={onClose}>
         <div className="pu-card" onClick={(e) => e.stopPropagation()}>
           <button className="pu-close" onClick={onClose}>×</button>
