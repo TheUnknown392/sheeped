@@ -6,11 +6,11 @@ import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { Session, Role } from '../imports/Session'
 import { SessionContext } from '../component/SessionProvider.jsx';
 
+import { getToken } from '../imports/jwt.js'
+
 import Popup from '../component/Popup.jsx'
 
 import NavButton from '../component/NavButton.jsx'
-import { getToken } from '../imports/jwt.js'
-import { logOut } from '../imports/logOut.jsx'
 
 const recentRequests = [
     { icon: "⌨️", name: "A48D — Mechanical Keyboard", time: "1 hour ago", badge: null, badgeClass: "badge-testing" },

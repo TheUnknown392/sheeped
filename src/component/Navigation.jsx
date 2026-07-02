@@ -15,6 +15,7 @@ import { Session, Role } from '../imports/Session'
 
 function updateRightButton(session){
     var button;
+
 	switch(session.role){
 	case Role.GUEST:
 	case Role.INVALID:
@@ -26,25 +27,11 @@ function updateRightButton(session){
         )
 		break;
 	case Role.USER:
-		button =(
-            <>  
-                <Dropdown>
-                    <Dropdown.Toggle  variant="success" className="btn-primary">
-                        {session.firstName + " " + session.lastName}
-                    </Dropdown.Toggle>
-                    <Dropdown.Menu className="btn-primary">
-                        <Dropdown.Item href="#/action-2">My Profile</Dropdown.Item> {/* todo: create a new page for this*/}
-                        <Dropdown.Item href="#/action-1">Orders</Dropdown.Item> {/* todo: create a new page for this*/}
-                        <Dropdown.Item onClick={logOut()}>Log Out</Dropdown.Item>
-                    </Dropdown.Menu>
-                </Dropdown>
-            </>
-            
-		)
-        break;
     case Role.ADMIN:
         button = (
-            <p>todo</p>
+            <>
+                <NavDropdown session = {session}/>
+            </>
         )
         break;
     default:
@@ -76,4 +63,26 @@ export default function Navigation(){
         </nav>
 
     )
+}
+
+function NavDropdown({session}){
+    var orderDropdown = "<Dropdown.Item href=\"#/action-1\">Orders</Dropdown.Item> {/* todo: create a new page for this*/}";
+    if(session.role != Role.USER){
+        orderDropdown = "";
+    }
+    return(
+        <>
+            <Dropdown>
+                <Dropdown.Toggle  variant="success" className="btn-primary">
+                    {session.firstName + " " + session.lastName}
+                </Dropdown.Toggle>
+                <Dropdown.Menu className="btn-primary">
+                    <Dropdown.Item href="#/action-2">My Profile</Dropdown.Item> {/* todo: create a new page for this*/}
+                    {orderDropdown}
+                    
+                    <Dropdown.Item onClick={logOut()}>Log Out</Dropdown.Item>
+                </Dropdown.Menu>
+            </Dropdown>            
+        </>
+    );
 }

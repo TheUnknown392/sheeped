@@ -5,7 +5,7 @@
     background: var(--bg);
     color: var(--text);
     font-family: 'DM Sans', sans-serif;
-    font-size: 14px;
+    font-size: 16px;
     line-height: 1.5;
     min-height: 100svh;
     display: flex;
@@ -30,7 +30,7 @@
     align-items: center;
     gap: 10px;
     font-weight: 600;
-    font-size: 16px;
+    font-size: 18px;
     letter-spacing: -0.3px;
 }
 
@@ -42,11 +42,11 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 16px;
+    font-size: 18px;
 }
 
 .admin-badge-pill {
-    font-size: 10px;
+    font-size: 12px;
     font-weight: 600;
     background: rgba(110, 231, 247, 0.12);
     color: var(--accent);
@@ -74,7 +74,7 @@
     justify-content: center;
     cursor: pointer;
     position: relative;
-    font-size: 15px;
+    font-size: 17px;
 }
 
 .notif-dot {
@@ -96,7 +96,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 600;
     color: #0a0a0f;
     cursor: pointer;
@@ -121,7 +121,7 @@
 }
 
 .nav-section-label {
-    font-size: 10px;
+    font-size: 12px;
     text-transform: uppercase;
     letter-spacing: 0.1em;
     color: var(--muted);
@@ -134,7 +134,7 @@
     align-items: center;
     gap: 9px;
     padding: 8px 20px;
-    font-size: 13px;
+    font-size: 15px;
     color: var(--muted);
     cursor: pointer;
     transition: all 0.15s;
@@ -164,7 +164,7 @@
 
 .nav-count {
     margin-left: auto;
-    font-size: 10px;
+    font-size: 12px;
     font-weight: 600;
     background: rgba(248, 113, 113, 0.15);
     color: #f87171;
@@ -184,11 +184,12 @@
     align-items: flex-start;
     justify-content: space-between;
     margin-bottom: 24px;
+    margin-top: 55px
 }
 
 .admin-page-title {
     font-family: 'Instrument Serif', serif;
-    font-size: 26px;
+    font-size: 28px;
     font-weight: 400;
     line-height: 1.1;
     margin-bottom: 4px;
@@ -214,7 +215,7 @@
     border: none;
     padding: 8px 18px;
     border-radius: 8px;
-    font-size: 13px;
+    font-size: 15px;
     font-weight: 600;
     font-family: 'DM Sans', sans-serif;
     cursor: pointer;
@@ -229,7 +230,7 @@
     border: 1px solid var(--border);
     padding: 8px 16px;
     border-radius: 8px;
-    font-size: 13px;
+    font-size: 15px;
     font-family: 'DM Sans', sans-serif;
     cursor: pointer;
     transition: all 0.2s;
@@ -256,7 +257,7 @@
 }
 
 .stat-card-label {
-    font-size: 11px;
+    font-size: 13px;
     text-transform: uppercase;
     letter-spacing: 0.08em;
     color: var(--muted);
@@ -274,19 +275,21 @@
 }
 
 .stat-card-delta {
-    font-size: 12px;
+    font-size: 14px;
 }
 
 .delta-up  { color: #4ade80; }
 .delta-down { color: #f87171; }
 
-/* ── QUICK ACTIONS ── */
+/* ── QUICK ACTIONS ── 
 .admin-quick-actions {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 10px;
     margin-bottom: 20px;
 }
+
+*/
 
 .quick-action {
     background: var(--surface);
@@ -310,7 +313,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 15px;
+    font-size: 17px;
     margin-bottom: 8px;
 }
 
@@ -318,8 +321,8 @@
 .qa-green  { background: rgba(74, 222, 128, 0.10); }
 .qa-purple { background: rgba(167, 139, 250, 0.10); }
 
-.qa-label { font-size: 12px; font-weight: 500; margin-bottom: 2px; }
-.qa-sub   { font-size: 11px; color: var(--muted); }
+.qa-label { font-size: 14px; font-weight: 500; margin-bottom: 2px; }
+.qa-sub   { font-size: 13px; color: var(--muted); }
 
 /* ── PANEL ── */
 .admin-panel {
@@ -338,13 +341,13 @@
 }
 
 .panel-title {
-    font-size: 13px;
+    font-size: 15px;
     font-weight: 600;
     color: var(--text);
 }
 
 .panel-action {
-    font-size: 12px;
+    font-size: 14px;
     color: var(--accent);
     cursor: pointer;
     background: none;
@@ -370,7 +373,7 @@
 }
 
 .order-table th {
-    font-size: 10px;
+    font-size: 12px;
     text-transform: uppercase;
     letter-spacing: 0.08em;
     color: var(--muted);
@@ -382,7 +385,7 @@
 
 .order-table td {
     padding: 12px 20px;
-    font-size: 13px;
+    font-size: 15px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.03);
 }
 
@@ -392,7 +395,7 @@
 .order-id {
     color: var(--muted);
     font-family: ui-monospace, Consolas, monospace;
-    font-size: 11px;
+    font-size: 13px;
 }
 
 .order-amount { font-weight: 500; }
@@ -402,7 +405,7 @@
     display: inline-flex;
     align-items: center;
     gap: 5px;
-    font-size: 11px;
+    font-size: 13px;
     font-weight: 600;
     padding: 3px 9px;
     border-radius: 99px;
@@ -451,7 +454,7 @@
 .bar.bar-accent { background: rgba(110, 231, 247, 0.55); }
 
 .bar-label {
-    font-size: 10px;
+    font-size: 12px;
     color: var(--muted);
     text-align: center;
 }
@@ -465,7 +468,7 @@
     gap: 10px;
     padding: 10px 20px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.03);
-    font-size: 13px;
+    font-size: 16px;
 }
 
 .source-row:last-child { border-bottom: none; }
@@ -486,7 +489,7 @@
 }
 
 .source-pct {
-    font-size: 12px;
+    font-size: 14px;
     color: var(--muted);
     min-width: 30px;
     text-align: right;
@@ -498,14 +501,14 @@
     border: 1px solid rgba(110, 231, 247, 0.15);
     border-radius: 14px;
     padding: 22px 24px;
-    margin: 4px 0 20px;
+    margin: 20px;
     display: flex;
     align-items: center;
     gap: 16px;
 }
 
 .chill-sheep {
-    font-size: 36px;
+    font-size: 38px;
     flex-shrink: 0;
     animation: sheepGraze 3s ease-in-out infinite;
 }
@@ -517,7 +520,7 @@
 
 .chill-title {
     font-family: 'Instrument Serif', serif;
-    font-size: 18px;
+    font-size: 20px;
     font-weight: 400;
     margin-bottom: 4px;
 }
@@ -528,7 +531,7 @@
 }
 
 .chill-sub {
-    font-size: 12px;
+    font-size: 14px;
     color: var(--muted);
 }
 
@@ -550,7 +553,7 @@
     outline: none;
     color: var(--text);
     font-family: 'DM Sans', sans-serif;
-    font-size: 13px;
+    font-size: 15px;
     flex: 1;
 }
 
@@ -568,7 +571,7 @@
 .admin-tab {
     flex: 1;
     padding: 5px 10px;
-    font-size: 12px;
+    font-size: 15px;
     font-weight: 500;
     font-family: 'DM Sans', sans-serif;
     border: none;
@@ -605,17 +608,17 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 10px;
+    font-size: 12px;
     font-weight: 600;
     color: #0a0a0f;
     flex-shrink: 0;
 }
 
-.user-name  { font-size: 13px; font-weight: 500; }
-.user-email { font-size: 11px; color: var(--muted); }
+.user-name  { font-size: 14px; font-weight: 500; }
+.user-email { font-size: 13px; color: var(--muted); }
 
 .role-badge {
-    font-size: 10px;
+    font-size: 12px;
     font-weight: 600;
     padding: 2px 7px;
     border-radius: 99px;
@@ -658,7 +661,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 13px;
+    font-size: 15px;
     flex-shrink: 0;
     margin-top: 1px;
 }
@@ -669,7 +672,7 @@
 .activity-alert   { background: rgba(248, 113, 113, 0.10); }
 
 .activity-text {
-    font-size: 13px;
+    font-size: 15px;
     flex: 1;
     line-height: 1.4;
 }
@@ -680,7 +683,7 @@
 }
 
 .activity-time {
-    font-size: 11px;
+    font-size: 13px;
     color: var(--muted);
     margin-top: 3px;
 }

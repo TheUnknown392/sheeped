@@ -2,14 +2,20 @@ import '../css/Home.css'
 import '../css/Admin.css'
 
 import sheeped from  '../assets/White-Stupid-Cute-Cartoon-Sheep.svg'
-import { useState } from 'react'
 
-const recentOrders = [
-    { id: '#1041', customer: 'Aarav S.', product: 'Pashmina Shawls',    source: 'Nepal', country: 'Nepal',  status: 'pending',   amount: '12,500' },
-    { id: '#1040', customer: 'Priya M.', product: 'Spice Set (bulk)',    source: 'India', country: 'India',  status: 'sourcing',  amount: '34,000' },
-    { id: '#1039', customer: 'Chen W.',  product: 'Electronics x50',     source: 'China', country: 'China',  status: 'shipped',   amount: '210,000' },
-    { id: '#1038', customer: 'John D.',  product: 'Yoga Mats x20',       source: 'USA', country: 'USA',    status: 'pending',   amount: '58,000' },
-    { id: '#1037', customer: 'Sita K.',  product: 'Thangka Paintings',   source: 'Nepal', country: 'Nepal',  status: 'cancelled', amount: '—' },
+import ProductPopup from '../component/AdminForm.jsx';
+import { SessionContext } from '../component/SessionProvider.jsx';
+import { getToken } from '../imports/jwt.js'
+
+
+import { useState, useEffect, useContext } from 'react'
+
+const recentRequest = [
+    { id: '#1041', customer: 'Aarav S.', name: 'Pashmina Shawls', country: 'Nepal',  status: 'pending',   amount: '12,500' },
+    { id: '#1040', customer: 'Priya M.', name: 'Spice Set (bulk)', country: 'India',  status: 'sourcing',  amount: '34,000' },
+    { id: '#1039', customer: 'Chen W.',  name: 'Electronics x50',      country: 'China',  status: 'shipped',   amount: '210,000' },
+    { id: '#1038', customer: 'John D.',  name: 'Yoga Mats x20',        country: 'USA',    status: 'pending',   amount: '58,000' },
+    { id: '#1037', customer: 'Sita K.',  name: 'Thangka Paintings',   country: 'Nepal',  status: 'cancelled', amount: '—' },
 ];
 
 const users = [
@@ -33,242 +39,251 @@ const statusClass = { pending: 'status-pending', sourcing: 'status-sourcing', sh
 const statusLabel  = { pending: 'Pending', sourcing: 'Sourcing', shipped: 'Shipped', cancelled: 'Cancelled' };
 const activityClass = { order: 'activity-order', payment: 'activity-payment', user: 'activity-user', alert: 'activity-alert' };
 
+
+
 export default function AdminDashboard() {
+    const { refreshSession } = useContext(SessionContext);
+    const token = getToken();
+
+    // todo: somehow extract tihs logout flow. can't use logout.jsx as that's a hook
+    //       remove this code dublication
+    if(!token){
+        localStorage.clear();
+        refreshSession();
+        return;
+    }
+
+    const [showForm, setShowForm]     = useState(false);
     const [activeNav, setActiveNav]   = useState('dashboard');
     const [activeTab, setActiveTab]   = useState('all');
     const [userSearch, setUserSearch] = useState('');
 
+    const [categories, setCategories] = useState([]);
+    const [countries, setCountries] = useState([]);
+
+    var request_id = ""; // Todo
+    useEffect(() => {
+        getCategories();
+        getCountries();
+    }, []);
+
+    async function getCategories() {
+        try {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/get/category`,{
+                method: "GET",
+                headers: {
+                    "Content-Type"  : "application/json",
+                    "Authorization" : "Bearer " + token
+                }
+            }
+                                        );
+
+            if (!response.ok) {
+                throw new Error("Failed to fetch categories.");
+                console.log("unable to get categories");
+            }
+
+            const data = await response.json();
+            setCategories(data);
+            console.log("category:", data);
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    async function getCountries() {
+        try {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/get/country`,{
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization" : "Bearer " + token
+                }
+            }
+                                        );
+
+            if (!response.ok) {
+                throw new Error("Failed to fetch countries.");
+                console.log("unable to get countries");
+            }
+
+            const data = await response.json();
+            setCountries(data);
+            console.log("countries:", data);
+        } catch (err) {
+            console.error(err);
+        }
+    }
     const filteredUsers = users.filter(u => {
         const matchSearch = u.name.toLowerCase().includes(userSearch.toLowerCase()) ||
-                            u.email.toLowerCase().includes(userSearch.toLowerCase());
+              u.email.toLowerCase().includes(userSearch.toLowerCase());
         const matchTab = activeTab === 'all' ||
-                         (activeTab === 'admins' && u.role === 'admin') ||
-                         (activeTab === 'users'  && u.role === 'user');
+              (activeTab === 'admins' && u.role === 'admin') ||
+              (activeTab === 'users'  && u.role === 'user');
         return matchSearch && matchTab;
     });
+    
+    // todo: I want this to open another form so we can put all the requestDetail datas
+    function verifyRequest(id){
+        setShowForm(true);
+        request_id = id;
+        console.log(request_id);
+    };
 
+    function requestUpdate(){
+        console.log("requestUpdate");
+    }
+    
     return (
-        <div className="admin-root">
-            <div className="admin-body">
+        <div className="root">
+        <div className="admin-body">
 
-                {/* MAIN CONTENT */}
-                <main className="admin-main">
+        {/* MAIN CONTENT */}
+        <main className="admin-main">
 
-                    {/* PAGE HEADER */}
-                    <div className="admin-page-header">
-                        <div>
-                            <h1 className="admin-page-title">Good morning, <em>Admin</em></h1>
-                            <p className="admin-page-sub">Saturday, May 23 2026 · 7 orders need attention</p>
-                        </div>
-                        <div style={{ display: 'flex', gap: 8 }}>
-                            <button className="admin-btn-ghost">⬇ Export</button>
-                            <button className="admin-btn-primary">＋ New Order</button>
-                        </div>
-                    </div>
-
-                    {/* STAT CARDS */}
-                    <div className="admin-stats-row">
-                        <div className="admin-stat-card">
-                            <div className="stat-card-label">🛍️ Total Orders</div>
-                            <div className="stat-card-value">1,284</div>
-                            <div className="stat-card-delta delta-up">↑ +12% this month</div>
-                        </div>
-                        <div className="admin-stat-card">
-                            <div className="stat-card-label">👥 Active Users</div>
-                            <div className="stat-card-value">348</div>
-                            <div className="stat-card-delta delta-up">↑ +8 this week</div>
-                        </div>
-                        <div className="admin-stat-card">
-                            <div className="stat-card-label">₨ Revenue (NRS)</div>
-                            <div className="stat-card-value">4.2M</div>
-                            <div className="stat-card-delta delta-up">↑ +18% vs last mo</div>
-                        </div>
-                        <div className="admin-stat-card">
-                            <div className="stat-card-label">⏱ Avg Quote Time</div>
-                            <div className="stat-card-value">11h</div>
-                            <div className="stat-card-delta delta-down">↓ Over 24h SLA!</div>
-                        </div>
-                    </div>
-
-                    {/* QUICK ACTIONS */}
-                    <div className="admin-quick-actions">
-                        <div className="quick-action">
-                            <div className="qa-icon qa-cyan">📋</div>
-                            <div className="qa-label">Create Sourcing Request</div>
-                            <div className="qa-sub">Manually raise a request</div>
-                        </div>
-                        <div className="quick-action">
-                            <div className="qa-icon qa-green">👤+</div>
-                            <div className="qa-label">Add User</div>
-                            <div className="qa-sub">Invite or create manually</div>
-                        </div>
-                        <div className="quick-action">
-                            <div className="qa-icon qa-purple">✉️</div>
-                            <div className="qa-label">Send Quote</div>
-                            <div className="qa-sub">Respond to a request</div>
-                        </div>
-                    </div>
-
-                    {/* ORDERS + CHARTS ROW */}
-                    <div className="admin-grid-2">
-
-                        {/* ORDERS TABLE */}
-                        <div className="admin-panel">
-                            <div className="panel-header">
-                                <div className="panel-title">🛍️ Recent Orders</div>
-                                <button className="panel-action">View all →</button>
-                            </div>
-                            <div style={{ overflowX: 'auto' }}>
-                                <table className="order-table">
-                                    <thead>
-                                        <tr>
-                                            <th>Order</th>
-                                            <th>Customer</th>
-                                            <th>Product</th>
-                                            <th>Source</th>
-                                            <th>Status</th>
-                                            <th>NRS</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {recentOrders.map(o => (
-                                            <tr key={o.id}>
-                                                <td className="order-id">{o.id}</td>
-                                                <td>{o.customer}</td>
-                                                <td>{o.product}</td>
-                                                <td>{o.source} {o.country}</td>
-                                                <td>
-                                                    <span className={`status-pill ${statusClass[o.status]}`}>
-                                                        <span className="status-dot" />
-                                                        {statusLabel[o.status]}
-                                                    </span>
-                                                </td>
-                                                <td className="order-amount">{o.amount}</td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-
-                        {/* RIGHT COLUMN */}
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-
-                            {/* BAR CHART */}
-                            <div className="admin-panel">
-                                <div className="panel-header">
-                                    <div className="panel-title">📊 Orders by Month</div>
-                                </div>
-                                <div className="chart-area">
-                                    {[['Dec',55],['Jan',40],['Feb',65],['Mar',50],['Apr',75],['May',90]].map(([m, h]) => (
-                                        <div className="bar-col" key={m}>
-                                            <div className={`bar${m === 'May' ? ' bar-accent' : ''}`} style={{ height: `${h}%` }} />
-                                            <div className={`bar-label${m === 'May' ? ' bar-label-accent' : ''}`}>{m}</div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-
-                            {/* SOURCE COUNTRIES */}
-                            <div className="admin-panel">
-                                <div className="panel-header">
-                                    <div className="panel-title">🌏 Source Countries</div>
-                                </div>
-                                {[['🇳🇵','Nepal',62],['🇨🇳','China',21],['🇮🇳','India',12],['🇺🇸','USA',5]].map(([flag, name, pct]) => (
-                                    <div className="source-row" key={name}>
-                                        <span>{flag}</span>
-                                        <span style={{ minWidth: 48 }}>{name}</span>
-                                        <div className="source-bar-track">
-                                            <div className="source-bar-fill" style={{ width: `${pct}%` }} />
-                                        </div>
-                                        <span className="source-pct">{pct}%</span>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* CHILL BREAK */}
-                    <div className="chill-break">
-                        <img src = {sheeped} style={{width: "30px", height: "30px"}} className="chill-sheep"></img>
-                        <div>
-                            <div className="chill-title">Taking a little <em>baa-reak...</em></div>
-                            <div className="chill-sub">Even admins need to breathe. Take a break. Maybe, have a kitkat.</div>
-                        </div>
-                    </div>
-
-                    {/* USERS + ACTIVITY ROW */}
-                    <div className="admin-grid-2">
-
-                        {/* USERS PANEL */}
-                        <div className="admin-panel">
-                            <div className="panel-header">
-                                <div className="panel-title">👥 Users</div>
-                                <button className="panel-action">Manage →</button>
-                            </div>
-                            <div style={{ padding: '12px 20px 0' }}>
-                                <div className="admin-search-bar">
-                                    🔍
-                                    <input
-                                        type="text"
-                                        placeholder="Search users by name or email..."
-                                        value={userSearch}
-                                        onChange={e => setUserSearch(e.target.value)}
-                                    />
-                                </div>
-                                <div className="admin-tabs">
-                                    {['all','admins','users','suspended'].map(t => (
-                                        <button key={t} className={`admin-tab ${activeTab === t ? 'active' : ''}`} onClick={() => setActiveTab(t)}>
-                                            {t.charAt(0).toUpperCase() + t.slice(1)}
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
-                            <div>
-                                {filteredUsers.map(u => (
-                                    <div className="user-row" key={u.email}>
-                                        <div className="user-avatar" style={{ background: u.grad }}>{u.initials}</div>
-                                        <div style={{ flex: 1 }}>
-                                            <div className="user-name">
-                                                {u.name}
-                                                <span className={`role-badge ${u.role === 'admin' ? 'role-admin' : 'role-user'}`}>
-                                                    {u.role}
-                                                </span>
-                                            </div>
-                                            <div className="user-email">{u.email}</div>
-                                        </div>
-                                        <span>{u.flag}</span>
-                                    </div>
-                                ))}
-                                {filteredUsers.length === 0 && (
-                                    <div style={{ padding: '20px', textAlign: 'center', color: 'var(--muted)', fontSize: 13 }}>No users found.</div>
-                                )}
-                            </div>
-                        </div>
-
-                        {/* ACTIVITY FEED */}
-                        <div className="admin-panel">
-                            <div className="panel-header">
-                                <div className="panel-title">⚡ Live Activity</div>
-                                <span className="live-dot" title="Live" />
-                            </div>
-                            <div>
-                                {activity.map((a, i) => (
-                                    <div className="activity-item" key={i}>
-                                        <div className={`activity-icon ${activityClass[a.type]}`}>{a.icon}</div>
-                                        <div className="activity-text">
-                                            {a.text}
-                                            <div className="activity-time">{a.time}</div>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-
-                    </div>
-
-                </main>
+            {/* PAGE HEADER */}
+            <div className="admin-page-header">
+                <div>
+                    <h1 className="admin-page-title">Good morning, <em>Admin</em></h1>
+                    <p className="admin-page-sub">Saturday, May 23 2026 · 7 orders need attention</p>
+                </div>
+                <div style={{ display: 'flex', gap: 8 }}>
+                    <button className="admin-btn-ghost">⬇ Export</button>
+                    <button className="admin-btn-primary">＋ New Order</button>
+                </div>
             </div>
+
+
+            {/* ORDERS TABLE */}
+            <div className="admin-panel">
+                <div className="panel-header">
+                    <div className="panel-title">🛍️ Recent Orders</div>
+                    <button className="panel-action">View all →</button>
+                </div>
+                <div style={{ overflowX: 'auto' }}>
+                    <table className="order-table">
+                        <thead>
+                            <tr>
+                                <th>Order</th>
+                                <th>Customer</th>
+                                <th>Name</th>
+                                <th>Source</th>
+                                <th>Status</th>
+                                <th>NRS</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {recentRequest.map(r => (
+                                <tr key={r.id}>
+                                    <td className="order-id">{r.id}</td>
+                                    <td>{r.customer}</td>
+                                    <td>{r.name}</td>
+                                    <td>{r.country}</td>
+                                    <td>
+                                        <span className={`status-pill ${statusClass[r.status]}`}>
+                                            <span className="status-dot" />
+                                            {statusLabel[r.status]}
+                                        </span>
+                                    </td>
+                                    <td className="order-amount">{r.amount}</td>
+                                    <td>
+                                        <button onClick={() => verifyRequest(r.id)} className="admin-btn-primary" style={{background: "#005522"}}> Fill </button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <ProductPopup
+                isOpen={showForm}
+                country={countries}
+                category={categories}
+                onClose={() => setShowForm(false)}
+                onSubmit={requestUpdate}
+            />
+            {/* CHILL BREAK */}
+            <div className="chill-break">
+                <img src = {sheeped} style={{width: "30px", height: "30px"}} className="chill-sheep"></img>
+                <div>
+                    <div className="chill-title">Take a little <em>baa-reak...</em></div>
+                    <div className="chill-sub">My wool is starting to block my eyessss.</div>
+                </div>
+            </div>
+
+            {/* USERS + ACTIVITY ROW */}
+            <div className="admin-grid-2">
+
+                {/* USERS PANEL */}
+                <div className="admin-panel">
+                    <div className="panel-header">
+                        <div className="panel-title">👥 Users</div>
+                        <button className="panel-action">Manage →</button>
+                    </div>
+                    <div style={{ padding: '12px 20px 0' }}>
+                        <div className="admin-search-bar">
+                            🔍
+                            <input
+                                type="text"
+                                placeholder="Search users by name or email..."
+                                value={userSearch}
+                                onChange={e => setUserSearch(e.target.value)}
+                            />
+                        </div>
+                        <div className="admin-tabs">
+                            {['all','admins','users','suspended'].map(t => (
+                                <button key={t} className={`admin-tab ${activeTab === t ? 'active' : ''}`} onClick={() => setActiveTab(t)}>
+                                    {t.charAt(0).toUpperCase() + t.slice(1)}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                    <div>
+                        {filteredUsers.map(u => (
+                            <div className="user-row" key={u.email}>
+                                <div className="user-avatar" style={{ background: u.grad }}>{u.initials}</div>
+                                <div style={{ flex: 1 }}>
+                                    <div className="user-name">
+                                        {u.name}
+                                        <span className={`role-badge ${u.role === 'admin' ? 'role-admin' : 'role-user'}`}>
+                                            {u.role}
+                                        </span>
+                                    </div>
+                                    <div className="user-email">{u.email}</div>
+                                </div>
+                                <span>{u.flag}</span>
+                            </div>
+                        ))}
+                        {filteredUsers.length === 0 && (
+                            <div style={{ padding: '20px', textAlign: 'center', color: 'var(--muted)', fontSize: 13 }}>No users found.</div>
+                        )}
+                    </div>
+                </div>
+
+                {/* ACTIVITY FEED */}
+                <div className="admin-panel">
+                    <div className="panel-header">
+                        <div className="panel-title">⚡ Live Activity</div>
+                        <span className="live-dot" title="Live" />
+                    </div>
+                    <div>
+                        {activity.map((a, i) => (
+                            <div className="activity-item" key={i}>
+                                <div className={`activity-icon ${activityClass[a.type]}`}>{a.icon}</div>
+                                <div className="activity-text">
+                                    {a.text}
+                                    <div className="activity-time">{a.time}</div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+            </div>
+
+        </main>
+        </div>
         </div>
     );
 }

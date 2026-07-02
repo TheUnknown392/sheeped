@@ -2,6 +2,15 @@ import jwt from 'jsonwebtoken'
 
 import User from '../models/UserModel.js'
 
+// extra code from imports/session. remove this somehow and make it sharable with front and back end
+export const Role = {
+  GUEST:   0,
+  USER:    1,
+  ADMIN:   2,
+  INVALID: 3
+}
+
+
 export function getExpSec(sec){
     return Math.floor(Date.now() / 1000) + (sec);
 }
