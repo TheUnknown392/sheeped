@@ -66,7 +66,9 @@ export default function Navigation(){
 }
 
 function NavDropdown({session}){
-    var orderDropdown = "<Dropdown.Item href=\"#/action-1\">Orders</Dropdown.Item> {/* todo: create a new page for this*/}";
+    var orderDropdown = (
+        <Dropdown.Item href="#/action-1">Orders</Dropdown.Item>
+        );
     if(session.role != Role.USER){
         orderDropdown = "";
     }

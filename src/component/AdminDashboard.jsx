@@ -11,11 +11,11 @@ import { getToken } from '../imports/jwt.js'
 import { useState, useEffect, useContext } from 'react'
 
 const recentRequest = [
-    { id: '#1041', customer: 'Aarav S.', name: 'Pashmina Shawls', country: 'Nepal',  status: 'pending',   amount: '12,500' },
-    { id: '#1040', customer: 'Priya M.', name: 'Spice Set (bulk)', country: 'India',  status: 'sourcing',  amount: '34,000' },
-    { id: '#1039', customer: 'Chen W.',  name: 'Electronics x50',      country: 'China',  status: 'shipped',   amount: '210,000' },
-    { id: '#1038', customer: 'John D.',  name: 'Yoga Mats x20',        country: 'USA',    status: 'pending',   amount: '58,000' },
-    { id: '#1037', customer: 'Sita K.',  name: 'Thangka Paintings',   country: 'Nepal',  status: 'cancelled', amount: '—' },
+    { id: '#1041', customer: 'Aarav S.', quantity: '100', url: "https://www.fakelink.com/", name: 'Pashmina Shawls', country: 'Nepal',  status: 'pending'   },
+    { id: '#1040', customer: 'Priya M.', quantity: '100', url: "https://www.fakelink.com/", name: 'Spice Set (bulk)', country: 'India',  status: 'sourcing' },
+    { id: '#1039', customer: 'Chen W.',  quantity: '100', url: "https://www.fakelink.com/", name: 'Electronics x50',      country: 'China',  status: 'shipped' },
+    { id: '#1038', customer: 'John D.',  quantity: '100', url: "https://www.fakelink.com/", name: 'Yoga Mats x20',        country: 'USA',    status: 'pending'   },
+    { id: '#1037', customer: 'Sita K.',  quantity: '100', url: "https://www.fakelink.com/", name: 'Thangka Paintings',   country: 'Nepal',  status: 'cancelled'  },
 ];
 
 const users = [
@@ -99,8 +99,7 @@ export default function AdminDashboard() {
                     "Content-Type": "application/json",
                     "Authorization" : "Bearer " + token
                 }
-            }
-                                        );
+            });
 
             if (!response.ok) {
                 throw new Error("Failed to fetch countries.");
@@ -167,9 +166,9 @@ export default function AdminDashboard() {
                                 <th>Order</th>
                                 <th>Customer</th>
                                 <th>Name</th>
+                                <th>Quantity</th>
                                 <th>Source</th>
                                 <th>Status</th>
-                                <th>NRS</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -178,7 +177,8 @@ export default function AdminDashboard() {
                                 <tr key={r.id}>
                                     <td className="order-id">{r.id}</td>
                                     <td>{r.customer}</td>
-                                    <td>{r.name}</td>
+                                    <td><a href ={r.url}>{r.name}</a></td>
+                                    <td>{r.quantity}</td>
                                     <td>{r.country}</td>
                                     <td>
                                         <span className={`status-pill ${statusClass[r.status]}`}>
@@ -186,7 +186,6 @@ export default function AdminDashboard() {
                                             {statusLabel[r.status]}
                                         </span>
                                     </td>
-                                    <td className="order-amount">{r.amount}</td>
                                     <td>
                                         <button onClick={() => verifyRequest(r.id)} className="admin-btn-primary" style={{background: "#005522"}}> Fill </button>
                                     </td>

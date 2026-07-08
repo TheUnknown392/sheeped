@@ -22,8 +22,8 @@ app.use("/product",ProductAPI);
 app.use("/get",AdminAPI);
 
 
-app.listen(process.env.EXPRESS_PORT, process.env.EXPRESS_HOST, () =>{
-    console.log("listening sucessfully");
+app.listen(process.env.EXPRESS_PORT, () =>{
+    console.log("listening sucessfully",process.env.EXPRESS_PORT);
 });
 
 
