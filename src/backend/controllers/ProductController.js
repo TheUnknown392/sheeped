@@ -47,4 +47,47 @@ const addRequest = async (req, res) => {
     }
 }
 
-export { addRequest }
+const recentRequest = async (req, res) => {
+    try {
+        const page = Math.max(1, parseInt(req.params.page) || 1);
+        const limit = 20;
+        const skip = (page - 1) * limit;
+
+        const recentRequests = await Request.find()
+            .populate("user_id", "firstName lastName country")
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limit);
+
+        const requests = [];
+
+        recentRequests.forEach(request => {
+            // Skip requests whose user no longer exists
+            if (!request.user_id) {
+                return;
+            }
+
+            request.links.forEach(link => {
+                requests.push({
+                    id: request._id,
+                    customer: `${request.user_id.firstName} ${request.user_id.lastName}`,
+                    country: request.user_id.country,
+                    url: link.url,
+                    name: link.name,
+                    quantity: link.quantity,
+                    description: request.description,
+                    createdAt: request.createdAt
+                });
+            });
+        });
+
+        res.status(200).json(requests);
+
+    } catch (err) {
+        res.status(500).json({
+            message: err.message
+        });
+    }
+};
+
+export { addRequest, recentRequest}

@@ -60,13 +60,37 @@ export default function AdminDashboard() {
 
     const [categories, setCategories] = useState([]);
     const [countries, setCountries] = useState([]);
-
+    const [requests, setRequests] = useState([]);
+    const [page, setPage] = useState(1);
+    
     var request_id = ""; // Todo
-    useEffect(() => {
-        getCategories();
-        getCountries();
-    }, []);
 
+    async function getRequests(pageNumber = page) {
+        try {
+            const response = await fetch(
+                `${import.meta.env.VITE_API_URL}/product/requests/${pageNumber}`,
+                {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": "Bearer " + token
+                    }
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error("Failed to fetch recent requests.");
+            }
+
+            const data = await response.json();
+            setRequests(data);
+            console.log("requests:", data);
+
+        } catch (err) {
+            console.error(err);
+        }
+    }
+    
     async function getCategories() {
         try {
             const response = await fetch(`${import.meta.env.VITE_API_URL}/get/category`,{
@@ -113,9 +137,17 @@ export default function AdminDashboard() {
             console.error(err);
         }
     }
+    useEffect(() => {
+        getCategories();
+        getCountries();
+    }, []);
+    
+    useEffect(()=>{
+        getRequests();
+    },[page]);
+
     const filteredUsers = users.filter(u => {
-        const matchSearch = u.name.toLowerCase().includes(userSearch.toLowerCase()) ||
-              u.email.toLowerCase().includes(userSearch.toLowerCase());
+        const matchSearch = u.name.toLowerCase().includes(userSearch.toLowerCase()) || u.email.toLowerCase().includes(userSearch.toLowerCase());
         const matchTab = activeTab === 'all' ||
               (activeTab === 'admins' && u.role === 'admin') ||
               (activeTab === 'users'  && u.role === 'user');
@@ -163,29 +195,20 @@ export default function AdminDashboard() {
                     <table className="order-table">
                         <thead>
                             <tr>
-                                <th>Order</th>
+                                <th>Item</th>
                                 <th>Customer</th>
                                 <th>Name</th>
                                 <th>Quantity</th>
-                                <th>Source</th>
-                                <th>Status</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {recentRequest.map(r => (
+                            {requests.map(r => (
                                 <tr key={r.id}>
                                     <td className="order-id">{r.id}</td>
                                     <td>{r.customer}</td>
                                     <td><a href ={r.url}>{r.name}</a></td>
                                     <td>{r.quantity}</td>
-                                    <td>{r.country}</td>
-                                    <td>
-                                        <span className={`status-pill ${statusClass[r.status]}`}>
-                                            <span className="status-dot" />
-                                            {statusLabel[r.status]}
-                                        </span>
-                                    </td>
                                     <td>
                                         <button onClick={() => verifyRequest(r.id)} className="admin-btn-primary" style={{background: "#005522"}}> Fill </button>
                                     </td>

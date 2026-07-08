@@ -19,7 +19,7 @@ app.use(cors());
 // major routes
 app.use("/user",UserAPI);
 app.use("/product",ProductAPI);
-app.use("/get",AdminAPI);
+app.use("/get",AdminAPI); // belongs to admin only. Todo: change name to /admin from /get
 
 
 app.listen(process.env.EXPRESS_PORT, () =>{

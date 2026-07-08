@@ -37,8 +37,10 @@ const requestDetailSchema = new mongoose.Schema({
     dom_shipping: {
         type: Number,
     },
-    notes: {
+    status: {
         type: String
+        enum: ['pending','accepted', 'rejected'],
+        default: 'pending'
     }
 }, { timestamps: true });
 
