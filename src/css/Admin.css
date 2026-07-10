@@ -695,3 +695,47 @@
     .admin-quick-actions { grid-template-columns: 1fr; }
     .admin-sidebar       { display: none; }
 }
+.order-filter {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 20px;
+    flex-wrap: wrap;
+}
+
+.order-filter label {
+    font-weight: 600;
+    color: #444;
+}
+
+.order-filter-select,
+.order-search {
+    padding: 10px 14px;
+    border: 1px solid #d5d5d5;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    background: white;
+    transition: border-color .2s ease, box-shadow .2s ease;
+}
+
+.order-filter-select {
+    min-width: 220px;
+    cursor: pointer;
+}
+
+.order-search {
+    min-width: 280px;
+    flex: 1;
+}
+
+.order-filter-select:hover,
+.order-search:hover {
+    border-color: #2b7cff;
+}
+
+.order-filter-select:focus,
+.order-search:focus {
+    outline: none;
+    border-color: #2b7cff;
+    box-shadow: 0 0 0 3px rgba(43,124,255,.15);
+}

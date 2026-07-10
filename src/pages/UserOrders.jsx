@@ -10,15 +10,34 @@ import { getToken } from '../imports/jwt.js'
 
 
 const STATUS_DISPLAY = {
-    accepted: { label: "Accepted", className: "status-shipped" },
-    rejected: { label: "Declined", className: "status-cancelled" }
+
+    waiting: {
+        label: "Pending Review",
+        className: "status-pending"
+    },
+
+    pending: {
+        label: "Quote Ready",
+        className: "status-processing"
+    },
+
+    accepted: {
+        label: "Accepted",
+        className: "status-shipped"
+    },
+
+    rejected: {
+        label: "Rejected",
+        className: "status-cancelled"
+    }
+
 };
 
-async function getQuotes(token, setQuotes, setLoading) {
+async function getRequests(token, setRequests, setLoading) {
     setLoading(true);
 
     try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/product/quotes`,{
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/product/myRequests`,{
             method: "GET",
             headers: {
                 "Content-Type"  : "application/json",
@@ -31,7 +50,8 @@ async function getQuotes(token, setQuotes, setLoading) {
         }
 
         const data = await response.json();
-        setQuotes(data.quotes);
+        console.log(data);
+        setRequests(data.requests);
     } catch (err) {
         console.error(err);
     } finally {
@@ -43,7 +63,9 @@ export default function UserOrders() {
     const { refreshSession } = useContext(SessionContext);
     const token = getToken();
 
-    const [quotes, setQuotes] = useState([]);
+    const [search, setSearch] = useState("");
+    const [statusFilter, setStatusFilter] = useState("all");
+    const [requests, setRequests] = useState([]);
     const [loading, setLoading] = useState(true);
     const [respondingId, setRespondingId] = useState(null);
     const [error, setError] = useState('');
@@ -55,21 +77,20 @@ export default function UserOrders() {
             return;
         }
 
-        getQuotes(token, setQuotes, setLoading);
+        getRequests(token, setRequests, setLoading);
     }, [token, refreshSession]);
 
-    const respond = useCallback(async (id, action) => {
+    const respond = useCallback(async (requests) => {
         setError('');
         setRespondingId(id);
 
         try {
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/product/quotes/${id}/respond`,{
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/product/myRequests`,{
                 method: "POST",
                 headers: {
                     "Content-Type"  : "application/json",
                     "Authorization" : "Bearer " + token
                 },
-                body: JSON.stringify({ action })
             });
 
             const data = await response.json();
@@ -77,17 +98,24 @@ export default function UserOrders() {
             if (!response.ok) {
                 throw new Error(data.message || "Failed to respond to quote.");
             }
-
-            setQuotes(prev => prev.map(q =>
-                q.id === id ? { ...q, status: action === "accept" ? "accepted" : "rejected" } : q
-            ));
+            console.log(data);
         } catch (err) {
             setError(err.message);
         } finally {
             setRespondingId(null);
         }
     }, [token]);
+    
+    const filteredRequests = requests.filter((request) => {
+        const matchesStatus =
+              statusFilter === "all" || request.status === statusFilter;
 
+        const matchesSearch =
+              request.name?.toLowerCase().includes(search.toLowerCase());
+
+        return matchesStatus && matchesSearch;
+    });
+    
     if (loading) {
         return (
             <div className="quotes-section" id="your-quotes">
@@ -101,7 +129,7 @@ export default function UserOrders() {
         );
     }
 
-    if (quotes.length === 0) {
+    if (requests.length === 0) {
         return (
             <div className="quotes-section" id="your-quotes">
                 <div className="admin-panel">
@@ -127,6 +155,32 @@ export default function UserOrders() {
 
                     {error && <p className="popup-error" style={{padding: "0 20px"}}>{error}</p>}
 
+                    <div className="order-filter">
+                        <label htmlFor="statusFilter">Filter:</label>
+
+                        <select
+                            id="statusFilter"
+                            className="order-filter-select"
+                            value={statusFilter}
+                            onChange={(e) => setStatusFilter(e.target.value)}
+                        >
+                            <option value="all">All</option>
+
+                            {Object.entries(STATUS_DISPLAY).map(([key, value]) => (
+                                <option key={key} value={key}>
+                                    {value.label}
+                                </option>
+                            ))}
+                        </select>
+
+                        <input
+                            type="text"
+                            className="order-search"
+                            placeholder="Search by item name..."
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                        />
+                    </div>
                     <div style={{ overflowX: 'auto' }}>
                         <table className="order-table">
                             <thead>
@@ -139,38 +193,46 @@ export default function UserOrders() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {quotes.map(q => (
-                                    <tr key={q.id}>
-                                        <td>{q.url ? <a href={q.url} target="_blank" rel="noreferrer">{q.name}</a> : q.name}</td>
-                                        <td>{q.category ?? "—"}</td>
-                                        <td>{q.country ?? "—"}</td>
-                                        <td>NRS {q.totalPrice?.toFixed(2) ?? "—"}</td>
-                                        <td>
-                                            {q.status === "pending" ? (
-                                                <div style={{display: "flex", gap: "8px"}}>
-                                                    <button
-                                                        className="admin-btn-primary"
-                                                        disabled={respondingId === q.id}
-                                                        onClick={() => respond(q.id, "accept")}
-                                                    >
-                                                        Accept
-                                                    </button>
-                                                    <button
-                                                        className="admin-btn-ghost"
-                                                        disabled={respondingId === q.id}
-                                                        onClick={() => respond(q.id, "reject")}
-                                                    >
-                                                        Decline
-                                                    </button>
-                                                </div>
-                                            ) : (
-                                                <span className={`status-pill ${STATUS_DISPLAY[q.status]?.className ?? ""}`}>
-                                                    {STATUS_DISPLAY[q.status]?.label ?? q.status}
-                                                </span>
-                                            )}
+                                {filteredRequests.length === 0 ? (
+                                    <tr>
+                                        <td colSpan={5} style={{ textAlign: "center", padding: "20px" }}>
+                                            No requests found.
                                         </td>
                                     </tr>
-                                ))}
+                                ) : (
+                                    filteredRequests.map(q => (
+                                        <tr key={q.id}>
+                                            <td>{q.url ? <a href={q.url} target="_blank" rel="noreferrer">{q.name}</a> : q.name}</td>
+                                            <td>{q.category ?? "—"}</td>
+                                            <td>{q.country ?? "—"}</td>
+                                            <td>NRS {q.totalPrice?.toFixed(2) ?? "—"}</td>
+                                            <td>
+                                                {q.status === "pending" ? (
+                                                    <div style={{ display: "flex", gap: "8px" }}>
+                                                        <button
+                                                            className="admin-btn-primary"
+                                                            disabled={respondingId === q.id}
+                                                            onClick={() => respond(q.id, "accept")}
+                                                        >
+                                                            Accept
+                                                        </button>
+                                                        <button
+                                                            className="admin-btn-ghost"
+                                                            disabled={respondingId === q.id}
+                                                            onClick={() => respond(q.id, "reject")}
+                                                        >
+                                                            Decline
+                                                        </button>
+                                                    </div>
+                                                ) : (
+                                                    <span className={`status-pill ${STATUS_DISPLAY[q.status]?.className ?? ""}`}>
+                                                        {STATUS_DISPLAY[q.status]?.label ?? q.status}
+                                                    </span>
+                                                )}
+                                            </td>
+                                        </tr>
+                                    ))
+                                )}
                             </tbody>
                         </table>
                     </div>

@@ -28,6 +28,8 @@ export default function MainForm(){
     ]);
 
     var [loginPopup, setLoginPopup] = useState(false);
+    const [errorPopup, setErrorPopup] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
 
     function addItem() {
         setItems(prev => [...prev, { name: "", url: "", qty: 1 }]);
@@ -49,6 +51,26 @@ export default function MainForm(){
         setItems(prev => prev.filter((_, i) => i !== index));
     }
 
+    function isValidHttpsUrl(url) {
+        try {
+            const parsed = new URL(url);
+
+            
+            if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
+                return "URL must start with https:// or http://";
+            }
+
+            
+            if (!parsed.hostname) {
+                return "URL is missing a website name.";
+            }
+
+            return null; 
+        } catch {
+            return "Please enter a valid HTTPS URL.";
+        }
+    }
+    
     async function handleSubmit() {
         if(session.role == Role.GUEST){
             setLoginPopup(true);
@@ -60,7 +82,7 @@ export default function MainForm(){
         }
         const token = getToken();
 
-        // todo: somehow extract tihs logout flow. can't use logout.jsx as that's a hook
+        // how extract tihs logout flow. can't use logout.jsx as that's a hook
         //       remove this code dublication
         if(!token){
             localStorage.clear();
@@ -69,6 +91,18 @@ export default function MainForm(){
         }
         
         removeEmptyItems();
+        
+        for (const item of items) {
+            if (item.url.trim() === "") continue;
+
+            const error = isValidHttpsUrl(item.url.trim());
+
+            if (error) {
+                setErrorMessage(error);
+                setErrorPopup(true);
+                return;
+            }
+        }
         var Authorization = "Bearer " + token;
         const response = await fetch(`${import.meta.env.VITE_API_URL}/product/add`,{
             method: "POST",
@@ -93,7 +127,9 @@ export default function MainForm(){
             break;
         case 500:
             // <Popup name="Error" Content="Soome error on our end. Please try again later."/>
-            alert("Soome error on our end. Please try again later.");
+            // alert("Soome error on our end. Please try again later.");
+            setErrorMessage("HTTP link is empty or Server Error");
+            setErrorPopup(true);
         default:
             console.log("response.status sent unhandled status code");
         }
@@ -211,7 +247,17 @@ export default function MainForm(){
                         {items.length !== 1 ? "s" : ""}
                     </button>                    
                 </div>
-                <Popup name = "Log-in" content = "Please log in first" open = {loginPopup}  onClose={() => {setLoginPopup(false)}} />
+                <Popup name = "Log-in"
+                       content = "Please log in first"
+                       open = {loginPopup}
+                       onClose={() => {setLoginPopup(false)}}
+                />
+                <Popup
+                    name="Invalid URL"
+                    content={errorMessage}
+                    open={errorPopup}
+                    onClose={() => setErrorPopup(false)}
+                />
                 {/* SIDEBAR */}
                 <div className="sidebar">
                     <div className="card recent-card">

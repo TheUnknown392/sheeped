@@ -361,4 +361,62 @@ const respondToQuote = async (req, res) => {
     }
 };
 
-export { addRequest, recentRequest, respondToRequest, myQuotes, respondToQuote }
+const myRequests = async (req, res) => {
+    try {
+
+        const requests = await Request.find({
+            user_id: req.user.id
+        }).sort({ createdAt: -1 });
+
+        const requestIds = requests.map(r => r._id);
+
+        const details = await RequestDetail.find({
+            request_id: { $in: requestIds }
+        });
+
+        const detailMap = new Map();
+
+        details.forEach(detail => {
+            detailMap.set(detail.link_id.toString(), detail);
+        });
+
+        const items = [];
+
+        requests.forEach(request => {
+
+            request.links.forEach(link => {
+
+                const detail = detailMap.get(link._id.toString());
+
+                items.push({
+                    id: link._id,
+                    requestId: request._id,
+                    name: link.name,
+                    url: link.url,
+                    quantity: link.quantity,
+                    description: request.description,
+
+                    status: detail
+                        ? detail.status
+                        : "waiting",
+
+                    totalPrice: detail?.total_price ?? null,
+                    createdAt: request.createdAt
+                });
+
+            });
+
+        });
+
+        res.json({
+            requests: items
+        });
+
+    } catch(err){
+        res.status(500).json({
+            message: err.message
+        });
+    }
+};
+
+export { addRequest, recentRequest, respondToRequest, myQuotes,myRequests, respondToQuote }
