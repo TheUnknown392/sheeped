@@ -1,8 +1,7 @@
-import { createContext, useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom"
+import { createContext, useState, useCallback, useMemo } from "react";
 import { jwtDecode } from "jwt-decode";
 import { Session, Role, getRoleFromToken } from '../imports/Session.jsx'
-import { hasExpired, getToken } from '../imports/jwt.js'
+import { getToken } from '../imports/jwt.js'
 
 export const SessionContext = createContext();
 
@@ -26,7 +25,9 @@ export function SessionProvider({ children }) {
         };
     });
 
-    const refreshSession = () => {
+    // Stable across renders (empty deps) so components can safely depend on
+    // it in a useEffect without risking a re-render loop.
+    const refreshSession = useCallback(() => {
         const token = getToken();
         
         if (!token) {
@@ -45,13 +46,17 @@ export function SessionProvider({ children }) {
             lastName: decoded.ln,
             role: getRoleFromToken(token)
         });
-    };
-    
-    
+    }, []);
 
+    // Memoized so consumers don't re-render on every SessionProvider render,
+    // only when session (or refreshSession, which never changes) actually change.
+    const value = useMemo(
+        () => ({ session, setSession, refreshSession }),
+        [session, refreshSession]
+    );
 
     return (
-        <SessionContext.Provider value={{ session, setSession, refreshSession }}>
+        <SessionContext.Provider value={value}>
             {children}
         </SessionContext.Provider>
     );

@@ -108,6 +108,27 @@
     transform: translateY(-1px);
 }
 
+.popup button[disabled] {
+    opacity: .6;
+    cursor: not-allowed;
+}
+
+.quote-total {
+    margin: -6px 0 0;
+    color: var(--text);
+    font-size: 14px;
+}
+
+.quote-total strong {
+    color: var(--accent);
+}
+
+.popup-error {
+    margin: -6px 0 0;
+    color: #f87171;
+    font-size: 13px;
+}
+
 .close-btn {
     position: absolute;
     top: 18px;

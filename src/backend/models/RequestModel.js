@@ -14,7 +14,7 @@ const RequestSchema = new mongoose.Schema({
     },
     description: {
         type: String,
-        required: [true, 'Description is required'],
+        required: [false, 'Description is required'],
     }
 }, { timestamps: true });
 

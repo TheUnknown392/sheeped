@@ -9,16 +9,17 @@ import { Session, Role, getRoleFromToken } from './imports/Session'
 import Home from './pages/Home'
 import Login from './pages/Login'
 import Register from './pages/Register'
-
+import UserOrders from './pages/UserOrders.jsx'
  
 
 function App() {
     return (
         <SessionProvider>
             <Routes>
-                <Route path="/"         element={<Home />} />
-                <Route path="/login"    element={<Login />} />
-                <Route path="/register" element={<Register />} />
+                <Route path="/"           element={<Home />} />
+                <Route path="/login"      element={<Login />} />
+                <Route path="/register"   element={<Register />} />
+                <Route path="/UserOrders" element={<UserOrders />} />
             </Routes>
         </SessionProvider>
     )

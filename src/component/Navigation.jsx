@@ -10,7 +10,7 @@ import NavButton from '../component/NavButton.jsx'
 
 import sheeped from '../assets/White-Stupid-Cute-Cartoon-Sheep.svg'
 
-import { logOut } from '../imports/logOut.jsx'
+import { useLogOut } from '../imports/logOut.jsx'
 import { Session, Role } from '../imports/Session'
 
 function updateRightButton(session){
@@ -48,10 +48,12 @@ export default function Navigation(){
     var rightButton = updateRightButton(session);
     return(
         <nav>
-            <div className="nav-logo">
-                <img src={sheeped} className="nav-logo-icon"/>
-                Sheeped
-            </div>
+            <a href="/" style = {{textDecoration: "none", color: "white"}}>
+                <div className="nav-logo">
+                    <img src={sheeped} className="nav-logo-icon"/>
+                    Sheeped
+                </div>
+            </a>
             <div className="nav-links">
                 <a href="#">How It Works</a> {/* TODO: add how it works page */}
                 <a href="#">FAQs</a>
@@ -66,8 +68,10 @@ export default function Navigation(){
 }
 
 function NavDropdown({session}){
+    const doLogOut = useLogOut();
+
     var orderDropdown = (
-        <Dropdown.Item href="#/action-1">Orders</Dropdown.Item>
+        <Dropdown.Item href="/UserOrders">Orders</Dropdown.Item>
         );
     if(session.role != Role.USER){
         orderDropdown = "";
@@ -82,7 +86,7 @@ function NavDropdown({session}){
                     <Dropdown.Item href="#/action-2">My Profile</Dropdown.Item> {/* todo: create a new page for this*/}
                     {orderDropdown}
                     
-                    <Dropdown.Item onClick={logOut()}>Log Out</Dropdown.Item>
+                    <Dropdown.Item onClick={doLogOut}>Log Out</Dropdown.Item>
                 </Dropdown.Menu>
             </Dropdown>            
         </>

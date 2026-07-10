@@ -2,7 +2,7 @@ import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { SessionContext } from "../component/SessionProvider.jsx";
 
-export function logOut() {
+export function useLogOut() {
     const { refreshSession } = useContext(SessionContext);
     const navigate = useNavigate();
 

@@ -37,8 +37,14 @@ const requestDetailSchema = new mongoose.Schema({
     dom_shipping: {
         type: Number,
     },
+    charge: { // platform fee, frozen at quote time so later CHARGE changes don't affect it
+        type: Number,
+    },
+    total_price: { // base_price * (1 + tax_rate/100) + int_shipping + dom_shipping + charge, frozen at quote time
+        type: Number,
+    },
     status: {
-        type: String
+        type: String,
         enum: ['pending','accepted', 'rejected'],
         default: 'pending'
     }

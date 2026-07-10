@@ -3,6 +3,8 @@ import dotenv from 'dotenv'
 import mongoose from 'mongoose'
 import cors from 'cors'
 
+import CHARGE from './utils/charge.js'
+
 import UserAPI from './routes/UserRoute.js'
 import ProductAPI from './routes/ProductRoute.js'
 import AdminAPI from './routes/AdminRoutes.js'
@@ -19,7 +21,13 @@ app.use(cors());
 // major routes
 app.use("/user",UserAPI);
 app.use("/product",ProductAPI);
-app.use("/get",AdminAPI); // belongs to admin only. Todo: change name to /admin from /get
+app.use("/admin",AdminAPI);
+
+app.get("/charge",async function (req, res){
+    res.status(200).json({
+        charge: CHARGE
+    });
+});
 
 
 app.listen(process.env.EXPRESS_PORT, () =>{

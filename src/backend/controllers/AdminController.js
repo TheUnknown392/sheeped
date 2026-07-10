@@ -7,6 +7,7 @@ import { signUser, getExpSec } from '../utils/jwt.js'
 import Country from '../models/CountryModel.js'
 import Category from '../models/CategoryModel.js'
 import Tax from '../models/TaxModel.js'
+import User from '../models/UserModel.js'
 
 
 const addCountry = async (req, res) => {
@@ -52,6 +53,49 @@ const addCategory = async (req, res) => {
 };
 
 
+const getUsers = async (req, res) => {
+    try {
+        const page = Number(req.query.page) || 1;
+        const limit = Number(req.query.limit) || 10;
+        const search = req.query.search || "";
+        const role = req.query.role || "all";
+
+        const query = {};
+
+        if (search) {
+            query.$or = [
+                { firstName: { $regex: search, $options: "i" } },
+                { lastName: { $regex: search, $options: "i" } },
+                { email: { $regex: search, $options: "i" } }
+            ];
+        }
+
+        if (role !== "all") {
+            query.role = role;
+        }
+
+        const totalUsers = await User.countDocuments(query);
+
+        const users = await User.find(query)
+            .sort({ createdAt: -1 })
+            .skip((page - 1) * limit)
+            .limit(limit)
+            .select("-password -token");
+
+        res.json({
+            users,
+            page,
+            totalPages: Math.ceil(totalUsers / limit),
+            totalUsers
+        });
+
+    } catch (err) {
+        res.status(500).json({
+            message: err.message
+        });
+    }
+};
+
 const getCountries = async (req, res) => {
     try {
         const countries = await Country.find().sort({ name: 1 });
@@ -96,5 +140,6 @@ export {
     addCategory,
     getCountries,
     getCategories,
-    getTaxes
+    getTaxes,
+    getUsers
 };
