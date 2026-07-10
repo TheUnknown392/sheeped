@@ -180,3 +180,379 @@
         font-size: 22px;
     }
 }
+
+
+.order-filter {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+
+    padding: 16px 20px;
+    margin-bottom: 16px;
+
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+
+    box-shadow: 0 12px 35px rgba(0,0,0,.25);
+}
+
+.order-filter label {
+    color: var(--text);
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.order-search,
+.order-filter-select,
+.searchable-select-toggle,
+.searchable-select-input {
+    width: 100%;
+    box-sizing: border-box;
+
+    background: var(--bg) !important;
+    color: var(--text) !important;
+
+    border: 1px solid var(--border) !important;
+    border-radius: 10px;
+
+    padding: 12px 14px;
+
+    font-size: 14px;
+
+    outline: none;
+    box-shadow: none;
+
+    transition: .2s;
+}
+
+.order-search {
+    flex: 1;
+    min-width: 260px;
+}
+
+.order-search::placeholder,
+.searchable-select-input::placeholder {
+    color: var(--muted);
+}
+
+.order-search:focus,
+.order-filter-select:focus,
+.searchable-select-toggle:focus,
+.searchable-select-input:focus {
+    border-color: var(--accent) !important;
+    box-shadow: 0 0 0 3px rgba(110,231,247,.12);
+}
+
+/* ---------- Select ---------- */
+
+.order-filter-select,
+.popup select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+
+    cursor: pointer;
+
+    background-color: var(--bg) !important;
+    color: var(--text) !important;
+
+    border: 1px solid var(--border) !important;
+    border-radius: 10px;
+
+    padding: 12px 40px 12px 14px;
+
+    background-image:
+        linear-gradient(45deg, transparent 50%, var(--text) 50%),
+        linear-gradient(135deg, var(--text) 50%, transparent 50%);
+    background-position:
+        calc(100% - 18px) calc(50% - 3px),
+        calc(100% - 12px) calc(50% - 3px);
+    background-size: 6px 6px;
+    background-repeat: no-repeat;
+
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+.order-filter-select:hover,
+.popup select:hover {
+    border-color: rgba(110,231,247,.4);
+}
+
+.order-filter-select:focus,
+.popup select:focus {
+    border-color: var(--accent) !important;
+    box-shadow: 0 0 0 3px rgba(110,231,247,.12) !important;
+}
+
+.order-filter-select option,
+.popup select option {
+    background: var(--surface2);
+    color: var(--text);
+}
+
+/* Hide default arrow */
+
+.order-filter-select::-ms-expand,
+.popup select::-ms-expand {
+    display: none;
+}
+
+/* ---------- Searchable Select ---------- */
+
+.searchable-select {
+    position: relative;
+    flex: 0 0 220px;
+    min-width: 220px;
+}
+
+.searchable-select-toggle {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    cursor: pointer;
+    text-align: left;
+
+    min-height: 46px;
+}
+
+.searchable-select-toggle:hover {
+    border-color: rgba(110,231,247,.35);
+}
+
+.searchable-select-panel {
+    position: absolute;
+    left: 0;
+    top: calc(100% + 8px);
+
+    width: 100%;
+
+    background: var(--surface);
+
+    border: 1px solid var(--border);
+    border-radius: 12px;
+
+    overflow: hidden;
+
+    z-index: 100;
+
+    box-shadow: 0 18px 40px rgba(0,0,0,.35);
+}
+
+.searchable-select-input {
+    border-radius: 0;
+    border: none !important;
+    border-bottom: 1px solid var(--border) !important;
+}
+
+.searchable-select-panel ul {
+    margin: 0;
+    padding: 0;
+
+    list-style: none;
+
+    max-height: 220px;
+    overflow-y: auto;
+}
+
+.searchable-select-panel li {
+    padding: 11px 14px;
+
+    color: var(--text);
+    background: var(--surface);
+
+    cursor: pointer;
+
+    transition: .15s;
+}
+
+.searchable-select-panel li:hover {
+    background: rgba(110,231,247,.08);
+    color: var(--accent);
+}
+
+/* ---------- Buttons ---------- */
+
+.panel-action {
+    padding: 10px 14px;
+
+    background: var(--surface2);
+    color: var(--text);
+
+    border: 1px solid var(--border);
+    border-radius: 10px;
+
+    cursor: pointer;
+
+    transition: .2s;
+}
+
+.panel-action:hover {
+    border-color: rgba(110,231,247,.3);
+    color: var(--accent);
+}
+
+.panel-action:disabled {
+    opacity: .5;
+    cursor: not-allowed;
+}
+
+.admin-btn-primary {
+    background: var(--accent);
+    color: #000;
+
+    border: none;
+    border-radius: 10px;
+
+    padding: 10px 16px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition: .2s;
+}
+
+.admin-btn-primary:hover {
+    transform: translateY(-1px);
+}
+
+.admin-btn-ghost {
+    background: transparent;
+    color: var(--text);
+
+    border: 1px solid var(--border);
+    border-radius: 10px;
+
+    padding: 10px 16px;
+
+    cursor: pointer;
+
+    transition: .2s;
+}
+
+.admin-btn-ghost:hover {
+    background: rgba(255,255,255,.03);
+    border-color: rgba(110,231,247,.35);
+    color: var(--accent);
+}
+
+/* ---------- Status ---------- */
+
+.status-pill {
+    display: inline-flex;
+    align-items: center;
+
+    padding: 6px 10px;
+
+    border-radius: 999px;
+
+    font-size: 13px;
+    font-weight: 600;
+}
+
+/* ---------- Force dark controls ---------- */
+
+input,
+select,
+textarea,
+button {
+    color-scheme: dark;
+}
+
+/* Remove browser focus borders */
+
+*:focus {
+    outline: none;
+}
+
+/* Firefox */
+
+select:-moz-focusring {
+    color: transparent;
+    text-shadow: 0 0 0 var(--text);
+}
+
+.popup {
+    width: 640px;
+    max-width: 95vw;
+    padding: 34px;
+}
+
+.popup form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.form-group label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.form-group input,
+.form-group select {
+    height: 46px;
+    font-size: 15px;
+}
+
+.charge-box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 14px 16px;
+
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+
+    color: var(--text);
+}
+
+.charge-box strong {
+    color: var(--accent);
+    font-size: 17px;
+}
+
+.quote-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 14px 16px;
+
+    background: rgba(110,231,247,.08);
+
+    border: 1px solid rgba(110,231,247,.15);
+    border-radius: 12px;
+
+    font-size: 15px;
+    color: var(--text);
+}
+
+.quote-total strong {
+    font-size: 18px;
+    color: var(--accent);
+}
+
+.popup-buttons {
+    display: flex;
+    gap: 12px;
+    margin-top: 10px;
+}
+
+.popup-buttons button {
+    flex: 1;
+    height: 48px;
+}
