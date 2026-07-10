@@ -83,9 +83,8 @@ function NavDropdown({session}){
                     {session.firstName + " " + session.lastName}
                 </Dropdown.Toggle>
                 <Dropdown.Menu className="btn-primary">
-                    <Dropdown.Item href="#/action-2">My Profile</Dropdown.Item> {/* todo: create a new page for this*/}
+                    <Dropdown.Item href="/profile">My Profile</Dropdown.Item>
                     {orderDropdown}
-                    
                     <Dropdown.Item onClick={doLogOut}>Log Out</Dropdown.Item>
                 </Dropdown.Menu>
             </Dropdown>            
