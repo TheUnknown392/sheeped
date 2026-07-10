@@ -166,8 +166,8 @@ export default function ProductPopup({ isOpen, onClose, onSubmit, requestId, lin
     const previewTaxRate = parseFloat(taxRate) || 0;
     const previewIntShipping = selectedCountry?.shipping ?? 0;
     const previewTotal = (selectedCategory && selectedCountry && basePrice !== '')
-        ? (previewPrice * (1 + previewTaxRate / 100) + previewDomShipping + previewIntShipping + (charge ?? 0)).toFixed(2)
-        : null;
+          ? (previewPrice * (1 + previewTaxRate / 100) + previewDomShipping + previewIntShipping + (charge ?? 0)).toFixed(2)
+          : null;
 
     async function handleSendQuote(e) {
         e.preventDefault();
@@ -250,103 +250,127 @@ export default function ProductPopup({ isOpen, onClose, onSubmit, requestId, lin
                 </button>
 
                 <h2>Send Quote</h2>
-
                 <form onSubmit={handleSendQuote}>
 
-                    <label>Category</label>
-                    <select
-                        name="category"
-                        value={selectedCategory ? selectedCategory._id : ""}
-                        onChange={handleCategoryChange}
-                        required
-                    >
-                        <option value="">Select Category</option>
+                    <div className="form-group">
+                        <label>Category</label>
+                        <select
+                            name="category"
+                            value={selectedCategory ? selectedCategory._id : ""}
+                            onChange={handleCategoryChange}
+                            required
+                        >
+                            <option value="">Select Category</option>
 
-                        {categories.map(c => (
-                            <option key={c._id} value={c._id}>
-                                {c.category_name}
-                            </option>
-                        ))}
-                    </select>
+                            {categories.map(c => (
+                                <option key={c._id} value={c._id}>
+                                    {c.category_name}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
 
-                    <label>Country</label>
-                    <select
-                        name="country"
-                        value={selectedCountry ? selectedCountry._id : ""}
-                        onChange={handleCountryChange}
-                        required
-                    >
-                        <option value="">Select Country</option>
+                    <div className="form-group">
+                        <label>Country</label>
+                        <select
+                            name="country"
+                            value={selectedCountry ? selectedCountry._id : ""}
+                            onChange={handleCountryChange}
+                            required
+                        >
+                            <option value="">Select Country</option>
 
-                        {countries.map(c => (
-                            <option key={c._id} value={c._id}>
-                                {c.name}
-                            </option>
-                        ))}
-                    </select>
+                            {countries.map(c => (
+                                <option key={c._id} value={c._id}>
+                                    {c.name}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
 
-                    <label>Base Price</label>
-                    <input
-                        type="number"
-                        name="basePrice"
-                        step="0.01"
-                        min="0"
-                        value={basePrice}
-                        onChange={(e) => setBasePrice(e.target.value)}
-                        required
-                    />
+                    <div className="form-group">
+                        <label>Base Price</label>
+                        <input
+                            type="number"
+                            name="basePrice"
+                            step="0.01"
+                            min="0"
+                            value={basePrice}
+                            onChange={(e) => setBasePrice(e.target.value)}
+                            required
+                        />
+                    </div>
 
-                    <label>Tax Rate (%)</label>
-                    <input
-                        type="number"
-                        name="taxRate"
-                        step="0.01"
-                        min="0"
-                        value={taxRate}
-                        onChange={(e) => setTaxRate(e.target.value)}
-                        required
-                    />
+                    <div className="form-group">
+                        <label>Tax Rate (%)</label>
+                        <input
+                            type="number"
+                            name="taxRate"
+                            step="0.01"
+                            min="0"
+                            value={taxRate}
+                            onChange={(e) => setTaxRate(e.target.value)}
+                            required
+                        />
+                    </div>
 
-                    <label>Domestic Shipping</label>
-                    <input
-                        type="number"
-                        name="domesticShipping"
-                        step="0.01"
-                        min="0"
-                        value={domesticShipping}
-                        onChange={(e) => setDomesticShipping(e.target.value)}
-                        required
-                    />
+                    <div className="form-group">
+                        <label>Domestic Shipping</label>
+                        <input
+                            type="number"
+                            name="domesticShipping"
+                            step="0.01"
+                            min="0"
+                            value={domesticShipping}
+                            onChange={(e) => setDomesticShipping(e.target.value)}
+                            required
+                        />
+                    </div>
 
-                    <label>International Shipping</label>
-                    <input
-                        type="number"
-                        name="internationalShipping"
-                        step="0.01"
-                        min="0"
-                        value={selectedCountry?.shipping ?? ""}
-                        readOnly
-                        required
-                    />
+                    <div className="form-group">
+                        <label>International Shipping</label>
+                        <input
+                            type="number"
+                            name="internationalShipping"
+                            value={selectedCountry?.shipping ?? ""}
+                            readOnly
+                        />
+                    </div>
 
-                    <label>Charge: {charge !== null ? charge : "…"}</label>
+                    <div className="charge-box">
+                        <span>Service Charge</span>
+                        <strong>{charge !== null ? `NRS ${charge}` : "Loading..."}</strong>
+                    </div>
 
                     {previewTotal !== null && (
-                        <p className="quote-total">Customer total: <strong>NRS {previewTotal}</strong></p>
+                        <div className="quote-total">
+                            Customer Total
+                            <strong>NRS {previewTotal}</strong>
+                        </div>
                     )}
 
                     {error && <p className="popup-error">{error}</p>}
 
-                    <button type="submit" className="admin-btn-primary" disabled={submitting}>
-                        {submitting ? "Sending…" : "Send Quote"}
-                    </button>
+                    <div className="popup-buttons">
+                        <button
+                            type="submit"
+                            className="admin-btn-primary"
+                            disabled={submitting}
+                        >
+                            {submitting ? "Sending..." : "Send Quote"}
+                        </button>
 
-                    <button type="button" className="admin-btn-ghost" onClick={handleReject} disabled={submitting}>
-                        Reject
-                    </button>
+                        <button
+                            type="button"
+                            className="admin-btn-ghost"
+                            onClick={handleReject}
+                            disabled={submitting}
+                        >
+                            Reject
+                        </button>
+                    </div>
 
                 </form>
-
             </div>
         </div>
     );

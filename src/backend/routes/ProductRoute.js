@@ -7,10 +7,10 @@ const router = express.Router();
 
 router.post("/add", addRequest);
 router.post("/requestdetail", verifyJWT, requireAdmin, respondToRequest);
-router.get("/requests/:page", verifyJWT, requireAdmin, recentRequest);
-
 router.post("/quotes/:id/respond", verifyJWT, respondToQuote);
 
+
+router.get("/requests/:page", verifyJWT, requireAdmin, recentRequest);
 router.get("/myRequests", verifyJWT, myRequests);
 
 export default router;

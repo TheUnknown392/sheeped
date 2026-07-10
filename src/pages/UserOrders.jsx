@@ -80,25 +80,30 @@ export default function UserOrders() {
         getRequests(token, setRequests, setLoading);
     }, [token, refreshSession]);
 
-    const respond = useCallback(async (requests) => {
+    const respond = useCallback(async (id, action) => {
         setError('');
         setRespondingId(id);
 
         try {
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/product/myRequests`,{
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/product/quotes/${id}/respond`,{
                 method: "POST",
                 headers: {
                     "Content-Type"  : "application/json",
                     "Authorization" : "Bearer " + token
                 },
+                body: JSON.stringify({
+                    action
+                })
             });
 
-            const data = await response.json();
 
+            const data = await response.json();
             if (!response.ok) {
                 throw new Error(data.message || "Failed to respond to quote.");
             }
             console.log(data);
+
+            await getRequests(token,setRequests,setLoading);
         } catch (err) {
             setError(err.message);
         } finally {

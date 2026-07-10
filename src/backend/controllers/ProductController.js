@@ -315,7 +315,6 @@ const respondToQuote = async (req, res) => {
 
     try {
         const requestDetail = await RequestDetail.findById(id);
-
         if (!requestDetail) {
             res.status(404).json({ message: "Quote not found." });
             return;
@@ -389,7 +388,7 @@ const myRequests = async (req, res) => {
                 const detail = detailMap.get(link._id.toString());
 
                 items.push({
-                    id: link._id,
+                    id: detail?._id,
                     requestId: request._id,
                     name: link.name,
                     url: link.url,
