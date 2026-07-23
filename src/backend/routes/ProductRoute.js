@@ -11,6 +11,7 @@ router.post("/quotes/:id/respond", verifyJWT, respondToQuote);
 
 
 router.get("/requests/:page", verifyJWT, requireAdmin, recentRequest);
-router.get("/myRequests", verifyJWT, myRequests);
+router.get("/myRequests",verifyJWT, myRequests); // maybe remove
+router.get("/myQuotes", verifyJWT, myQuotes);
 
 export default router;

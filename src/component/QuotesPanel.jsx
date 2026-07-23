@@ -30,6 +30,7 @@ async function getQuotes(token, setQuotes, setLoading) {
 
         const data = await response.json();
         setQuotes(data.quotes);
+        console.log(quotes);
     } catch (err) {
         console.error(err);
     } finally {

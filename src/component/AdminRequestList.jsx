@@ -10,7 +10,7 @@ import { useState, useEffect, useContext, useMemo, useRef } from 'react'
 
 
 const STATUS_DISPLAY = {
-    pending:  { label: "Quoted",   className: "status-pending" },
+    waiting:  { label: "Quoted",   className: "status-pending" },
     accepted: { label: "Accepted", className: "status-shipped" },
     rejected: { label: "Rejected", className: "status-cancelled" }
 };

@@ -123,7 +123,7 @@ const recentRequest = async (req, res) => {
 };
 
 // Admin responds to a single requested item: either sends a priced quote
-// (creates a 'pending' RequestDetail the customer can accept/reject) or
+// (creates a 'waiting' RequestDetail the customer can accept/reject) or
 // rejects the item outright (creates a 'rejected' RequestDetail, no pricing needed).
 const respondToRequest = async (req, res) => {
     const { action, requestId, linkId, category, country, basePrice, taxRate, domesticShipping } = req.body;
@@ -230,7 +230,7 @@ const respondToRequest = async (req, res) => {
             dom_shipping: domShipping,
             charge: CHARGE,
             total_price: totalPrice,
-            status: "pending"
+            status: "pending" // see UserOrder.jsx STATUS_DISPLAY
         });
 
         res.status(201).json({
@@ -249,46 +249,101 @@ const respondToRequest = async (req, res) => {
 // item/pricing info to render and decide on without extra round trips.
 const myQuotes = async (req, res) => {
     try {
-        const myRequests = await Request.find({ user_id: req.user.id }).select("links");
-
+        const unQuoted = await Request.find({ user_id: req.user.id }).sort({ createdAt: -1});
+        console.log("unquoted", unQuoted);
+        const requestids = unQuoted.map(req => req._id.toString());
+        
+        const quoted = await RequestDetail.find({ request_id:{ $in: requestids }})
+              .populate("country_id", "name")
+              .populate("category_id")
+              .sort({ createdAt: -1});
+        
+        console.log("quoted", quoted);
+        const requestHistory = [];
         const linkById = new Map();
-        const requestIds = [];
-
-        myRequests.forEach(request => {
-            requestIds.push(request._id);
+        
+        unQuoted.forEach(request => {
             request.links.forEach(link => {
                 linkById.set(link._id.toString(), link);
             });
         });
 
-        const details = await RequestDetail.find({ request_id: { $in: requestIds } })
-            .populate("country_id", "name")
-            .populate("category_id", "category_name")
-            .sort({ createdAt: -1 });
+        unQuoted.forEach(request => {
+            let foundQuote = false;
 
-        const quotes = details.map(detail => {
-            const link = linkById.get(detail.link_id.toString());
+            quoted.forEach(quote => {
+                if (!quote.request_id.equals(request._id)) return;
 
-            return {
-                id: detail._id,
-                requestId: detail.request_id,
-                name: link ? link.name : "(item no longer available)",
-                url: link ? link.url : null,
-                quantity: link ? link.quantity : null,
-                category: detail.category_id ? detail.category_id.category_name : null,
-                country: detail.country_id ? detail.country_id.name : null,
-                basePrice: detail.base_price,
-                taxRate: detail.tax_rate,
-                domesticShipping: detail.dom_shipping,
-                internationalShipping: detail.int_shipping,
-                charge: detail.charge,
-                totalPrice: detail.total_price,
-                status: detail.status,
-                createdAt: detail.createdAt
-            };
+                foundQuote = true;
+
+                const link = linkById.get(quote.link_id.toString());
+
+                requestHistory.push({
+                    id: quote._id,
+                    requestId: quote.request_id,
+                    name: link ? link.name : "(item no longer available)",
+                    url: link ? link.url : null,
+                    quantity: link ? link.quantity : null,
+                    category: quote.category_id ? quote.category_id.category_name : null,
+                    country: quote.country_id ? quote.country_id.name : null,
+                    basePrice: quote.base_price,
+                    taxRate: quote.tax_rate,
+                    domesticShipping: quote.dom_shipping,
+                    internationalShipping: quote.int_shipping,
+                    charge: quote.charge,
+                    totalPrice: quote.total_price,
+                    status: quote.status,
+                    createdAt: quote.createdAt
+                });
+            });
+            if (!foundQuote) {
+                request.links.forEach(link => {
+                    requestHistory.push({
+                        id: request._id,
+                        requestId: request._id,
+                        name: link.name,
+                        url: link.url,
+                        quantity: link.quantity,
+                        category: null,
+                        country: null,
+                        basePrice: null,
+                        taxRate: null,
+                        domesticShipping: null,
+                        internationalShipping: null,
+                        charge: null,
+                        totalPrice: null,
+                        status: "waiting",
+                        createdAt: request.createdAt
+                    });
+                });
+            }
         });
+        console.log("requestHistory",requestHistory)
+        /*
+          const quotes = details.map(detail => {
+          const link = linkById.get(detail.link_id.toString());
 
-        res.status(200).json({ quotes });
+          return {
+          id: detail._id,
+          requestId: detail.request_id,
+          name: link ? link.name : "(item no longer available)",
+          url: link ? link.url : null,
+          quantity: link ? link.quantity : null,
+          category: detail.category_id ? detail.category_id.category_name : null,
+          country: detail.country_id ? detail.country_id.name : null,
+          basePrice: detail.base_price,
+          taxRate: detail.tax_rate,
+          domesticShipping: detail.dom_shipping,
+          internationalShipping: detail.int_shipping,
+          charge: detail.charge,
+          totalPrice: detail.total_price,
+          status: detail.status,
+          createdAt: detail.createdAt
+          };
+          });
+          
+        */
+        res.status(200).json({ requestHistory });
 
     } catch (err) {
         res.status(500).json({
@@ -297,7 +352,7 @@ const myQuotes = async (req, res) => {
     }
 };
 
-// A logged in user accepts or rejects one of their own pending quotes.
+// A logged in user accepts or rejects one of their own waiting quotes.
 // Accepting creates the Order; rejecting just closes out the quote.
 const respondToQuote = async (req, res) => {
     const { action } = req.body;
@@ -327,7 +382,7 @@ const respondToQuote = async (req, res) => {
             return;
         }
 
-        if (requestDetail.status !== "pending") {
+        if (requestDetail.status == "accepted") {
             res.status(409).json({ message: `This quote was already ${requestDetail.status}.` });
             return;
         }
@@ -344,8 +399,8 @@ const respondToQuote = async (req, res) => {
             user_id: req.user.id,
             request_detail_id: requestDetail._id,
             charge: requestDetail.charge
-            // delivery_status / order_status intentionally left at their schema
-            // defaults — see the "verification enum" todo in OrderModel.js.
+            // todo: delivery_status 
+            // todo: defaults
         });
 
         requestDetail.status = "accepted";

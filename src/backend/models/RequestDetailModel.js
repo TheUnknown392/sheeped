@@ -45,8 +45,8 @@ const requestDetailSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ['pending','accepted', 'rejected'],
-        default: 'pending'
+        enum: ['waiting','accepted', 'rejected', 'pending'],
+        default: 'waiting'
     }
 }, { timestamps: true });
 

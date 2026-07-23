@@ -129,12 +129,6 @@ export default function ProductPopup({ isOpen, onClose, onSubmit, requestId, lin
     }, [token]);
 
 
-    // taxRate auto-fills from the category+country match but stays a normal
-    // editable field (admin can override when no matching Tax entry exists
-    // yet - the server trusts that override in exactly that case). Syncing an
-    // external computed value into editable local state is one of the
-    // legitimate uses of an effect here.
-    /* eslint-disable react-hooks/set-state-in-effect */
     useEffect(() => {
         if (selectedCategory && selectedCountry && taxes) {
             const matchingTax = taxes.find(tax => tax.category_id === selectedCategory._id && tax.country_id === selectedCountry._id);

@@ -4,6 +4,7 @@ import '../css/Admin.css'
 import { useState, useEffect, useContext, useCallback } from 'react'
 
 import Navigation from '../component/Navigation.jsx'
+import Footer from '../component/Footer.jsx'
 
 import { SessionContext } from '../component/SessionProvider.jsx';
 import { getToken } from '../imports/jwt.js'
@@ -33,11 +34,11 @@ const STATUS_DISPLAY = {
 
 };
 
-async function getRequests(token, setRequests, setLoading) {
+async function getQuotes(token, setQuotes, setLoading) {
     setLoading(true);
 
     try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/product/myRequests`,{
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/product/myQuotes`,{
             method: "GET",
             headers: {
                 "Content-Type"  : "application/json",
@@ -51,7 +52,7 @@ async function getRequests(token, setRequests, setLoading) {
 
         const data = await response.json();
         console.log(data);
-        setRequests(data.requests);
+        setQuotes(data.requestHistory);
     } catch (err) {
         console.error(err);
     } finally {
@@ -65,7 +66,7 @@ export default function UserOrders() {
 
     const [search, setSearch] = useState("");
     const [statusFilter, setStatusFilter] = useState("all");
-    const [requests, setRequests] = useState([]);
+    const [quotes, setQuotes] = useState([]);
     const [loading, setLoading] = useState(true);
     const [respondingId, setRespondingId] = useState(null);
     const [error, setError] = useState('');
@@ -77,7 +78,7 @@ export default function UserOrders() {
             return;
         }
 
-        getRequests(token, setRequests, setLoading);
+        getQuotes(token, setQuotes, setLoading);
     }, [token, refreshSession]);
 
     const respond = useCallback(async (id, action) => {
@@ -103,7 +104,7 @@ export default function UserOrders() {
             }
             console.log(data);
 
-            await getRequests(token,setRequests,setLoading);
+            await getQuotes(token,setQuotes,setLoading);
         } catch (err) {
             setError(err.message);
         } finally {
@@ -111,10 +112,9 @@ export default function UserOrders() {
         }
     }, [token]);
     
-    const filteredRequests = requests.filter((request) => {
+    const filteredQuotes = quotes.filter((request) => {
         const matchesStatus =
               statusFilter === "all" || request.status === statusFilter;
-
         const matchesSearch =
               request.name?.toLowerCase().includes(search.toLowerCase());
 
@@ -134,7 +134,7 @@ export default function UserOrders() {
         );
     }
 
-    if (requests.length === 0) {
+    if (quotes.length === 0) {
         return (
             <div className="quotes-section" id="your-quotes">
                 <div className="admin-panel">
@@ -198,14 +198,14 @@ export default function UserOrders() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {filteredRequests.length === 0 ? (
+                                {filteredQuotes.length === 0 ? (
                                     <tr>
                                         <td colSpan={5} style={{ textAlign: "center", padding: "20px" }}>
-                                            No requests found.
+                                            No quotes found.
                                         </td>
                                     </tr>
                                 ) : (
-                                    filteredRequests.map(q => (
+                                    filteredQuotes.map(q => (
                                         <tr key={q.id}>
                                             <td>{q.url ? <a href={q.url} target="_blank" rel="noreferrer">{q.name}</a> : q.name}</td>
                                             <td>{q.category ?? "—"}</td>
@@ -243,6 +243,8 @@ export default function UserOrders() {
                     </div>
                 </div>
             </div>
+            <br />
+            <Footer />
         </>
     );
 }
