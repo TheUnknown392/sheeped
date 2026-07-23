@@ -178,7 +178,7 @@ const respondToRequest = async (req, res) => {
             return;
         }
 
-        const price = parseFloat(basePrice);
+        const price = parseFloat(basePrice) * link.quantity;
         const domShipping = parseFloat(domesticShipping);
 
         if (!Number.isFinite(price) || price < 0) {

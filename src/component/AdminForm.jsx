@@ -162,6 +162,11 @@ export default function ProductPopup({ isOpen, onClose, onSubmit, requestId, lin
     const previewTotal = (selectedCategory && selectedCountry && basePrice !== '')
           ? (previewPrice * (1 + previewTaxRate / 100) + previewDomShipping + previewIntShipping + (charge ?? 0)).toFixed(2)
           : null;
+    const previewPerItem = (selectedCategory && selectedCountry && basePrice !== '')
+          ? (previewPrice * (1 + previewTaxRate / 100)).toFixed(2)
+          : null;
+
+    const previewShippingFee = previewIntShipping + previewDomShipping;
 
     async function handleSendQuote(e) {
         e.preventDefault();
@@ -336,12 +341,19 @@ export default function ProductPopup({ isOpen, onClose, onSubmit, requestId, lin
                         <strong>{charge !== null ? `NRS ${charge}` : "Loading..."}</strong>
                     </div>
 
-                    {previewTotal !== null && (
+                    {previewPerItem !== null && (
                         <div className="quote-total">
-                            Customer Total
-                            <strong>NRS {previewTotal}</strong>
+                            Customer Per Item
+                            <strong>NRS {previewPerItem}</strong>
                         </div>
                     )}
+                    {previewShippingFee !== null && (
+                        <div className="quote-total">
+                            shipping Fee
+                            <strong>NRS {previewShippingFee}</strong>
+                        </div>
+                    )}
+
 
                     {error && <p className="popup-error">{error}</p>}
 
