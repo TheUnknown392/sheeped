@@ -11,6 +11,7 @@ import Login from './pages/Login'
 import Register from './pages/Register'
 import UserOrders from './pages/UserOrders.jsx'
 import UserProfile from './pages/UserProfile.jsx'
+import PaymentStatus from './pages/PaymentStatus.jsx'
  
 
 function App() {
@@ -22,6 +23,7 @@ function App() {
                 <Route path="/register"   element={<Register />} />
                 <Route path="/UserOrders" element={<UserOrders />} />
                 <Route path="/profile" element={<UserProfile />} />
+                <Route path="/payment-status" element={<PaymentStatus />} />
             </Routes>
         </SessionProvider>
     )

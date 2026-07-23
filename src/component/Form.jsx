@@ -148,7 +148,7 @@ export default function MainForm(){
     return(
         <div className="section">
             <span className="section-label">New Request</span>
-            <h2 className="section-title">Find any product at,<br /><em className="serif" style={{fontStyle:'italic', color:'var(--accent)'}}>Nepal, India, China and America.</em></h2>
+            <h2 className="section-title">Find any product at,<br /><em className="serif" style={{fontStyle:'italic', color:'var(--accent)'}}>Nepal, India and China</em></h2>
             <p className="section-sub">Enter details below to receive a custom quotation within 24 hours.</p>
 
             <div className="main-grid">

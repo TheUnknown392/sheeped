@@ -8,6 +8,7 @@ import CHARGE from './utils/charge.js'
 import UserAPI from './routes/UserRoute.js'
 import ProductAPI from './routes/ProductRoute.js'
 import AdminAPI from './routes/AdminRoutes.js'
+import PaymentAPI from './routes/paymentRoutes.js'
 
 dotenv.config();
 
@@ -22,6 +23,7 @@ app.use(cors());
 app.use("/user",UserAPI);
 app.use("/product",ProductAPI);
 app.use("/admin",AdminAPI);
+app.use("/payment",PaymentAPI);
 
 app.get("/charge",async function (req, res){
     res.status(200).json({

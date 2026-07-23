@@ -1,48 +1,42 @@
-import '../css/Home.css'
-import '../css/Admin.css'
+import '../css/Home.css';
+import '../css/Admin.css';
 
-import { useState, useEffect, useContext, useCallback } from 'react'
+import { useState, useEffect, useContext, useCallback } from 'react';
 
-import Navigation from '../component/Navigation.jsx'
-import Footer from '../component/Footer.jsx'
+import Navigation from '../component/Navigation.jsx';
+import Footer from '../component/Footer.jsx';
 
 import { SessionContext } from '../component/SessionProvider.jsx';
-import { getToken } from '../imports/jwt.js'
-
+import { getToken } from '../imports/jwt.js';
 
 const STATUS_DISPLAY = {
-
     waiting: {
         label: "Pending Review",
         className: "status-pending"
     },
-
     pending: {
         label: "Quote Ready",
         className: "status-processing"
     },
-
     accepted: {
         label: "Accepted",
         className: "status-shipped"
     },
-
     rejected: {
         label: "Rejected",
         className: "status-cancelled"
     }
-
 };
 
 async function getQuotes(token, setQuotes, setLoading) {
     setLoading(true);
 
     try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/product/myQuotes`,{
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/product/myQuotes`, {
             method: "GET",
             headers: {
-                "Content-Type"  : "application/json",
-                "Authorization" : "Bearer " + token
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + token
             }
         });
 
@@ -51,8 +45,7 @@ async function getQuotes(token, setQuotes, setLoading) {
         }
 
         const data = await response.json();
-        console.log(data);
-        setQuotes(data.requestHistory);
+        setQuotes(data.requestHistory || []);
     } catch (err) {
         console.error(err);
     } finally {
@@ -61,7 +54,8 @@ async function getQuotes(token, setQuotes, setLoading) {
 }
 
 export default function UserOrders() {
-    const { refreshSession } = useContext(SessionContext);
+    const { session, refreshSession} = useContext(SessionContext);
+    console.log(session);
     const token = getToken();
 
     const [search, setSearch] = useState("");
@@ -79,39 +73,70 @@ export default function UserOrders() {
         }
 
         getQuotes(token, setQuotes, setLoading);
-    }, [token, refreshSession]);
+    }, [token, refreshSession, session]);
 
+    // Handle Khalti Payment Initiation on Quote Acceptance
+    const handleAcceptAndPayWithKhalti = async (quote) => {
+        setError('');
+        setRespondingId(quote.id);
+
+        try {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/payment/khalti-initiate`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + token
+                },
+                body: JSON.stringify({
+                    quoteId: quote.id,
+                    amount: quote.totalPrice,
+                    orderName: quote.name,
+                    customerInfo: session
+                })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok || !data.payment_url) {
+                throw new Error(data.message || "Failed to initiate Khalti payment.");
+            }
+
+            // Redirect user to Khalti sandbox payment page
+            window.location.href = data.payment_url;
+        } catch (err) {
+            setError(err.message);
+            setRespondingId(null);
+        }
+    };
+
+    // Handle Reject / Decline Quote
     const respond = useCallback(async (id, action) => {
         setError('');
         setRespondingId(id);
 
         try {
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/product/quotes/${id}/respond`,{
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/product/quotes/${id}/respond`, {
                 method: "POST",
                 headers: {
-                    "Content-Type"  : "application/json",
-                    "Authorization" : "Bearer " + token
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + token
                 },
-                body: JSON.stringify({
-                    action
-                })
+                body: JSON.stringify({ action })
             });
-
 
             const data = await response.json();
             if (!response.ok) {
                 throw new Error(data.message || "Failed to respond to quote.");
             }
-            console.log(data);
 
-            await getQuotes(token,setQuotes,setLoading);
+            await getQuotes(token, setQuotes, setLoading);
         } catch (err) {
             setError(err.message);
         } finally {
             setRespondingId(null);
         }
     }, [token]);
-    
+
     const filteredQuotes = quotes.filter((request) => {
         const matchesStatus =
               statusFilter === "all" || request.status === statusFilter;
@@ -120,32 +145,42 @@ export default function UserOrders() {
 
         return matchesStatus && matchesSearch;
     });
-    
+
     if (loading) {
         return (
-            <div className="quotes-section" id="your-quotes">
-                <div className="admin-panel">
-                    <div className="panel-header">
-                        <div className="panel-title">📦 Your Quotes</div>
+            <>
+                <Navigation />
+                <div className="quotes-section" id="your-quotes">
+                    <div className="admin-panel">
+                        <div className="panel-header">
+                            <div className="panel-title">Your Quotes</div>
+                        </div>
+                        <p className="admin-page-sub" style={{ padding: "20px" }}>
+                            Loading your quotes…
+                        </p>
                     </div>
-                    <p className="admin-page-sub" style={{padding: "20px"}}>Loading your quotes…</p>
                 </div>
-            </div>
+                <Footer />
+            </>
         );
     }
 
     if (quotes.length === 0) {
         return (
-            <div className="quotes-section" id="your-quotes">
-                <div className="admin-panel">
-                    <div className="panel-header">
-                        <div className="panel-title">📦 Your Quotes</div>
+            <>
+                <Navigation />
+                <div className="quotes-section" id="your-quotes">
+                    <div className="admin-panel">
+                        <div className="panel-header">
+                            <div className="panel-title">Your Quotes</div>
+                        </div>
+                        <p className="admin-page-sub" style={{ padding: "20px" }}>
+                            Nothing here yet — once we price one of your requested items, it'll show up here for you to accept or decline.
+                        </p>
                     </div>
-                    <p className="admin-page-sub" style={{padding: "20px"}}>
-                        Nothing here yet — once we price one of your requested items, it'll show up here for you to accept or decline.
-                    </p>
                 </div>
-            </div>
+                <Footer />
+            </>
         );
     }
 
@@ -155,10 +190,10 @@ export default function UserOrders() {
             <div className="quotes-section" id="your-quotes">
                 <div className="admin-panel">
                     <div className="panel-header">
-                        <div className="panel-title">📦 Your Quotes</div>
+                        <div className="panel-title">Your Quotes</div>
                     </div>
 
-                    {error && <p className="popup-error" style={{padding: "0 20px"}}>{error}</p>}
+                    {error && <p className="popup-error" style={{ padding: "0 20px", color: "red" }}>{error}</p>}
 
                     <div className="order-filter">
                         <label htmlFor="statusFilter">Filter:</label>
@@ -170,7 +205,6 @@ export default function UserOrders() {
                             onChange={(e) => setStatusFilter(e.target.value)}
                         >
                             <option value="all">All</option>
-
                             {Object.entries(STATUS_DISPLAY).map(([key, value]) => (
                                 <option key={key} value={key}>
                                     {value.label}
@@ -186,6 +220,7 @@ export default function UserOrders() {
                             onChange={(e) => setSearch(e.target.value)}
                         />
                     </div>
+
                     <div style={{ overflowX: 'auto' }}>
                         <table className="order-table">
                             <thead>
@@ -194,7 +229,7 @@ export default function UserOrders() {
                                     <th>Category</th>
                                     <th>Source</th>
                                     <th>Total</th>
-                                    <th>Status</th>
+                                    <th>Action / Status</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -207,19 +242,30 @@ export default function UserOrders() {
                                 ) : (
                                     filteredQuotes.map(q => (
                                         <tr key={q.id}>
-                                            <td>{q.url ? <a href={q.url} target="_blank" rel="noreferrer">{q.name}</a> : q.name}</td>
+                                            <td>
+                                                {q.url ? (
+                                                    <a href={q.url} target="_blank" rel="noreferrer">{q.name}</a>
+                                                ) : (
+                                                    q.name
+                                                )}
+                                            </td>
                                             <td>{q.category ?? "—"}</td>
                                             <td>{q.country ?? "—"}</td>
-                                            <td>NRS {q.totalPrice?.toFixed(2) ?? "—"}</td>
+                                            <td>NRS {q.totalPrice ? q.totalPrice.toFixed(2) : "—"}</td>
                                             <td>
                                                 {q.status === "pending" ? (
-                                                    <div style={{ display: "flex", gap: "8px" }}>
+                                                    <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
                                                         <button
                                                             className="admin-btn-primary"
                                                             disabled={respondingId === q.id}
-                                                            onClick={() => respond(q.id, "accept")}
+                                                            onClick={() => handleAcceptAndPayWithKhalti(q)}
+                                                            style={{
+                                                                backgroundColor: '#5c2d91',
+                                                                color: '#fff',
+                                                                cursor: respondingId === q.id ? 'not-allowed' : 'pointer'
+                                                            }}
                                                         >
-                                                            Accept
+                                                            {respondingId === q.id ? 'Redirecting...' : 'Khalti'}
                                                         </button>
                                                         <button
                                                             className="admin-btn-ghost"

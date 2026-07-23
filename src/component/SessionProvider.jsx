@@ -48,8 +48,7 @@ export function SessionProvider({ children }) {
         });
     }, []);
 
-    // Memoized so consumers don't re-render on every SessionProvider render,
-    // only when session (or refreshSession, which never changes) actually change.
+    // save
     const value = useMemo(
         () => ({ session, setSession, refreshSession }),
         [session, refreshSession]
