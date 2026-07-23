@@ -15,6 +15,7 @@ export default function PaymentStatus() {
     // Extract parameters sent by Khalti redirect
     const pidx = searchParams.get('pidx');
     const urlStatus = searchParams.get('status');
+    const purchase_order_id = searchParams.get('purchase_order_id');
     const amount = searchParams.get('amount'); // In Paisa
 
     const [verifying, setVerifying] = useState(true);
@@ -54,7 +55,7 @@ export default function PaymentStatus() {
                         'Content-Type': 'application/json',
                         'Authorization': 'Bearer ' + token,
                     },
-                    body: JSON.stringify({ pidx }),
+                    body: JSON.stringify({ pidx, purchase_order_id}),
                 });
 
                 const data = await response.json();

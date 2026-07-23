@@ -79,6 +79,7 @@ export default function UserOrders() {
     const handleAcceptAndPayWithKhalti = async (quote) => {
         setError('');
         setRespondingId(quote.id);
+        
 
         try {
             const response = await fetch(`${import.meta.env.VITE_API_URL}/payment/khalti-initiate`, {
